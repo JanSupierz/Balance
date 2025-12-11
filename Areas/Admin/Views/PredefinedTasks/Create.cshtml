@@ -1,0 +1,65 @@
+﻿@model Balance.Models.PredefinedTask
+@using Balance.Models.Enums
+
+@{
+    ViewData["Title"] = "New Template";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card card-clean shadow-sm border">
+                <div class="card-body p-4">
+                    <h3 class="mb-4 fw-bold" style="color: var(--primary-base);">New Template</h3>
+
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold">Title</label>
+                            <input asp-for="Title" class="form-control form-control-lg" placeholder="e.g. Morning Jog" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Frequency" class="form-label fw-bold">Frequency</label>
+                                <select asp-for="Frequency" class="form-select" asp-items="Html.GetEnumSelectList<Frequency>()"></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="HowManyTimes" class="form-label fw-bold">Repetitions</label>
+                                <input asp-for="HowManyTimes" class="form-control" value="1" min="1" />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="PointsPerClick" class="form-label fw-bold">Points Reward</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--warning-text);">
+                                    <i class="bi bi-star-fill"></i>
+                                </span>
+                                <input asp-for="PointsPerClick" class="form-control border-start-0" value="10" min="0" />
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-light border me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-4 btn-pill-action">Create Template</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

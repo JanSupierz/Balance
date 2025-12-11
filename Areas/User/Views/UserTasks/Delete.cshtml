@@ -1,0 +1,49 @@
+﻿@model Balance.Models.UserTask
+@using Balance.Models.Enums
+
+@{
+    ViewData["Title"] = "Delete Task";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card card-clean shadow-sm border">
+                <div class="card-body p-5 text-center">
+
+                    <div class="mb-4">
+                        <div class="icon-circle lg theme-danger mx-auto">
+                            <i class="bi bi-trash3-fill"></i>
+                        </div>
+                    </div>
+
+                    <h3 class="fw-bold mb-2">Delete Task?</h3>
+                    <p class="text-muted mb-4">
+                        Are you sure you want to delete <strong>"@Model.Title"</strong>? <br />
+                        This action cannot be undone.
+                    </p>
+
+                    <div class="rounded p-3 mb-4 text-start d-flex align-items-center justify-content-between" style="background-color: var(--primary-soft);">
+                        <div>
+                            <div class="fw-bold" style="color: var(--text-main);">@Model.Title</div>
+                            <small class="text-muted">@Model.Frequency</small>
+                        </div>
+                        <div style="color: var(--warning-text);" class="fw-bold">
+                            @Model.PointsPerClick <i class="bi bi-star-fill"></i>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-pill-action">
+                                Yes, Delete Forever
+                            </button>
+                            <a asp-action="Index" class="btn btn-light border btn-pill-action">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

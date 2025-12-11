@@ -1,0 +1,538 @@
+﻿@model IEnumerable<Balance.Models.UserTask>
+@using Balance.Models.Enums
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    ViewData["Title"] = "My Tasks";
+    var finishedTasks = ViewBag.FinishedTasks as List<Balance.Models.UserTask> ?? new List<Balance.Models.UserTask>();
+    var templates = ViewBag.PredefinedTasks as IEnumerable<Balance.Models.PredefinedTask> ?? new List<Balance.Models.PredefinedTask>();
+    var antiforgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+    var hasActive = Model.Any();
+    var hasCompleted = finishedTasks.Any();
+
+    var allTags = ViewBag.AllTags as IEnumerable<Balance.Models.TaskTag> ?? new List<Balance.Models.TaskTag>();
+    var currentSort = ViewBag.CurrentSort as string ?? "smart";
+    var currentTag = ViewBag.CurrentTag as int?;
+    var currentFreq = ViewBag.CurrentFreq as Frequency?;
+}
+
+<input type="hidden" id="antiforgeryToken" value="@antiforgeryToken" />
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 fw-bold"><i class="bi bi-check2-circle me-2" style="color: var(--primary-base);"></i>My Tasks</h2>
+        <div>
+            <button class="btn btn-light border shadow-sm me-2 btn-pill-action" data-bs-toggle="modal" data-bs-target="#templatesModal">
+                <i class="bi bi-collection"></i> <span class="d-none d-md-inline">Templates</span>
+            </button>
+            <a asp-action="Create" class="btn btn-primary shadow-sm btn-pill-action">
+                <i class="bi bi-plus-lg"></i> New
+            </a>
+        </div>
+    </div>
+
+    <div class="card card-clean mb-4 p-3 shadow-sm border">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-12 col-sm-auto">
+                <div class="input-group">
+                    <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                        <i class="bi bi-sort-down"></i>
+                    </span>
+                    <select name="sortOrder" id="sortOrderSelect" class="form-select border-start-0 ps-0 focus-ring-none" onchange="this.form.submit()">
+                        <option value="smart" selected="@(currentSort == "smart" ? "selected" : null)">Smart Priority</option>
+                        <option value="title" selected="@(currentSort == "title" ? "selected" : null)">Title (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-auto">
+                <div class="input-group">
+                    <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                        <i class="bi bi-tags"></i>
+                    </span>
+                    <select name="filterTagId" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
+                        <option value="">All Tags</option>
+                        @foreach (var tag in allTags)
+                        {
+                            <option value="@tag.Id" selected="@(currentTag == tag.Id ? "selected" : null)">@tag.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-auto">
+                <div class="input-group">
+                    <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                        <i class="bi bi-calendar3"></i>
+                    </span>
+                    <select name="filterFrequency" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
+                        <option value="">All Types</option>
+                        <option value="@Frequency.OneTime" selected="@(currentFreq == Frequency.OneTime ? "selected" : null)">One Time</option>
+                        <option value="@Frequency.Daily" selected="@(currentFreq == Frequency.Daily ? "selected" : null)">Daily</option>
+                        <option value="@Frequency.Weekly" selected="@(currentFreq == Frequency.Weekly ? "selected" : null)">Weekly</option>
+                    </select>
+                </div>
+            </div>
+
+            @if (currentSort != "smart" || currentTag.HasValue || currentFreq.HasValue)
+            {
+                <div class="col-12 col-sm-auto ms-sm-auto text-end">
+                    <a asp-action="Index" class="btn btn-link text-muted text-decoration-none small px-0">
+                        <i class="bi bi-x-circle me-1"></i>Clear Filters
+                    </a>
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+<div class="mb-4">
+    <ul class="nav nav-tabs border-bottom-0" id="taskTabs" role="tablist">
+        <li class="nav-item me-2">
+            <button class="nav-link active border-0 rounded-pill px-4 shadow-sm" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button"
+                    style="background-color: var(--bg-surface); color: var(--text-main);">
+                Active
+                <span class="badge ms-1" id="active-count" style="background-color: var(--primary-base); color: #fff;">@Model.Count()</span>
+            </button>
+        </li>
+        <li class="nav-item @(hasCompleted ? "" : "d-none")" id="completed-nav-item">
+            <button class="nav-link border-0 rounded-pill px-4 text-muted" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button">
+                Completed
+                <span class="badge ms-1" id="completed-count" style="background-color: var(--success-text); color: #fff;">@finishedTasks.Count</span>
+            </button>
+        </li>
+    </ul>
+</div>
+
+<div class="tab-content" id="taskTabsContent">
+    <div class="tab-pane fade show active" id="active" role="tabpanel">
+        <div id="active-empty-state" class="@(hasActive ? "d-none" : "") text-center py-5">
+            <i class="bi bi-check2-all display-1 text-muted mb-3 opacity-25"></i>
+            <h4 class="text-muted">No active tasks</h4>
+            <div class="d-flex gap-2 justify-content-center mt-3">
+                <button class="btn btn-light border btn-pill-action" data-bs-toggle="modal" data-bs-target="#templatesModal">Use Template</button>
+                <a asp-action="Create" class="btn btn-primary btn-pill-action">Create Custom</a>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="active-list">
+            @foreach (var task in Model)
+            {
+                // Priority Logic
+                int priority = 4;
+                var now = DateTime.Now;
+                bool isWeekend = now.DayOfWeek == DayOfWeek.Saturday || now.DayOfWeek == DayOfWeek.Sunday;
+                bool isOneTimeUrgent = task.Frequency == Frequency.OneTime && (task.Deadline < now || (task.Deadline - now).TotalDays <= 1);
+
+                if (isOneTimeUrgent) { priority = 1; }
+                else if (task.Frequency == Frequency.Weekly && isWeekend) { priority = 2; }
+                else if (task.Frequency == Frequency.Daily) { priority = 3; }
+
+                bool isOverdue = task.Frequency == Frequency.OneTime && now > task.Deadline;
+                bool isUrgentVisual = priority == 1 || priority == 2;
+                var deadlineText = task.Frequency == Frequency.OneTime ? task.Deadline.ToString("MMM dd") : "";
+
+                <div class="col task-col"
+                     id="task-card-@task.Id"
+                     data-task-id="@task.Id"
+                     data-frequency="@task.Frequency"
+                     data-priority="@priority"
+                     data-deadline-ticks="@task.Deadline.Ticks"
+                     data-title="@task.Title"
+                     data-points="@task.PointsPerClick"
+                     data-is-overdue="@(isOverdue ? "true" : "false")"
+                     data-is-urgent="@(isUrgentVisual ? "true" : "false")"
+                     data-deadline-text="@deadlineText">
+                    @await Html.PartialAsync("_TaskCard", task, new ViewDataDictionary(ViewData) { ["IsCompleted"] = false })
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="completed" role="tabpanel">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="completed-list">
+            @foreach (var finished in finishedTasks)
+            {
+                int priority = 4;
+                var now = DateTime.Now;
+                var deadlineText = finished.Frequency == Frequency.OneTime ? finished.Deadline.ToString("MMM dd") : "";
+
+                bool isOverdue = finished.Frequency == Frequency.OneTime && now > finished.Deadline;
+                bool isUrgentVisual = false;
+                if (finished.Frequency == Frequency.Weekly && (now.DayOfWeek == DayOfWeek.Saturday || now.DayOfWeek == DayOfWeek.Sunday))
+                {
+                    isUrgentVisual = true;
+                }
+                else if (finished.Frequency == Frequency.OneTime && !isOverdue)
+                {
+                    if (finished.Deadline.Date <= now.Date.AddDays(1))
+                    {
+                        isUrgentVisual = true;
+                    }
+                }
+
+                <div class="col task-col"
+                     id="task-card-@finished.Id"
+                     data-task-id="@finished.Id"
+                     data-frequency="@finished.Frequency"
+                     data-priority="@priority"
+                     data-deadline-ticks="@finished.Deadline.Ticks"
+                     data-title="@finished.Title"
+                     data-points="@finished.PointsPerClick"
+                     data-deadline-text="@deadlineText"
+                     data-is-overdue="@(isOverdue ? "true" : "false")"
+                     data-is-urgent="@(isUrgentVisual ? "true" : "false")">
+                    @await Html.PartialAsync("_TaskCard", finished, new ViewDataDictionary(ViewData) { ["IsCompleted"] = true })
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_TemplatesModal", templates)
+
+<div class="modal fade" id="deleteTaskModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border shadow">
+            <div class="modal-header border-0 pb-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body text-center pt-0 pb-4">
+                <div class="mb-3">
+                    <div class="icon-circle lg theme-danger mx-auto"><i class="bi bi-trash3-fill"></i></div>
+                </div>
+                <h4 class="fw-bold">Delete Task?</h4>
+                <p class="text-muted">Are you sure you want to delete <span class="fw-bold js-delete-title" style="color: var(--text-main);"></span>?</p>
+                <form method="post" asp-action="Delete">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" class="js-delete-id" />
+                    <div class="d-flex justify-content-center gap-2 mt-4">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger px-4">Yes, Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 1050">
+    <div id="undoToast" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body"><span id="toast-message">Task updated.</span> <button type="button" class="btn btn-sm btn-outline-light ms-3" id="btn-undo-action"><i class="bi bi-arrow-counterclockwise"></i> Undo</button></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const token = document.getElementById('antiforgeryToken').value;
+            const activeList = document.getElementById('active-list');
+            const completedList = document.getElementById('completed-list');
+            const activeCountEl = document.getElementById('active-count');
+            const completedCountEl = document.getElementById('completed-count');
+            const completedNavItem = document.getElementById('completed-nav-item');
+            const activeEmptyState = document.getElementById('active-empty-state');
+            const undoToast = new bootstrap.Toast(document.getElementById('undoToast'), { delay: 4000 });
+            const undoBtn = document.getElementById('btn-undo-action');
+            let lastModifiedTaskId = null;
+
+            // Tabs Styling Logic
+            const tabs = document.querySelectorAll('.nav-link');
+            tabs.forEach(tab => {
+                tab.addEventListener('show.bs.tab', function() {
+                    tabs.forEach(t => {
+                        t.classList.remove('active', 'shadow-sm');
+                        t.classList.add('text-muted');
+                        t.style.backgroundColor = '';
+                        t.style.color = '';
+                    });
+                    this.classList.add('active', 'shadow-sm');
+                    this.classList.remove('text-muted');
+                    this.style.backgroundColor = 'var(--bg-surface)';
+                    this.style.color = 'var(--text-main)';
+                });
+            });
+
+            activeList.addEventListener('click', function(e) {
+                const btn = e.target.closest('.btn-complete');
+                if (btn) toggleTask(btn.closest('.task-col').dataset.taskId, btn.closest('.task-col'), btn);
+            });
+
+            undoBtn.addEventListener('click', function() {
+                if(lastModifiedTaskId) { revertTask(lastModifiedTaskId); undoToast.hide(); }
+            });
+
+            document.body.addEventListener('click', function(e) {
+                 const btn = e.target.closest('.js-delete-trigger');
+                 if(btn && btn.dataset.target === "#deleteTaskModal") {
+                     e.preventDefault();
+                     const modalEl = document.getElementById('deleteTaskModal');
+                     if(modalEl) {
+                         modalEl.querySelector('.js-delete-id').value = btn.dataset.id;
+                         modalEl.querySelector('.js-delete-title').textContent = btn.dataset.title;
+                         const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+                         modalInstance.show();
+                     }
+                 }
+            });
+
+            // Helper to generate the specific "Check In" button HTML
+            function getCheckInButtonHtml(btnClass, points) {
+                return `
+                    <button type="button" class="btn btn-sm btn-complete ${btnClass} w-100 shadow-sm d-flex align-items-center justify-content-between ps-3 pe-2 py-2" style="transition: all 0.3s ease;">
+                        <span class="fw-bold"><i class="bi bi-check-lg me-1"></i>Check In</span>
+                        <span class="badge rounded-pill d-flex align-items-center"
+                              style="background-color: var(--bg-surface); color: var(--text-main); border: 1px solid rgba(0,0,0,0.1);"
+                              title="You earn ${points} points for this action">
+                            +${points} <i class="bi bi-star-fill text-warning ms-1"></i>
+                        </span>
+                    </button>
+                `;
+            }
+
+            async function toggleTask(taskId, cardCol, btn) {
+                cardCol.dataset.isMoving = "to-completed";
+                btn.disabled = true; const originalText = btn.innerHTML;
+                try {
+                    const response = await fetch('@Url.Action("Toggle")', { method: 'POST', headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token }, body: JSON.stringify({ id: taskId }) });
+                    if (!response.ok) throw new Error();
+                    const result = await response.json();
+
+                    if (result.newTotalPoints !== undefined) {
+                        const nav = document.getElementById('nav-points-display');
+                        if (nav) { nav.innerText = result.newTotalPoints; nav.style.color='#10b981'; setTimeout(()=>nav.style.color='',500); }
+                    }
+
+                    updateProgressUI(cardCol, result.completedCount, result.howMany, result.isCompleted);
+
+                    if (result.isCompleted) {
+                        const dateDisplay = cardCol.querySelector('.date-display');
+                        if(dateDisplay && result.completedAt) {
+                            dateDisplay.lastElementChild.className = 'text-success completion-date';
+                            dateDisplay.lastElementChild.innerHTML = `<i class="bi bi-check2-circle me-1"></i>${result.completedAt}`;
+                        }
+
+                        // FADE TO GREEN EFFECT
+                        btn.classList.remove('btn-primary', 'btn-outline-danger');
+                        btn.classList.add('btn-success');
+                        btn.style.borderColor = "";
+
+                        moveCardToCompleted(cardCol);
+                        document.getElementById('toast-message').textContent = "Task completed!";
+                    } else {
+                        btn.disabled = false; btn.innerHTML = originalText;
+                        delete cardCol.dataset.isMoving;
+                        document.getElementById('toast-message').textContent = `Saved (${result.completedCount}/${result.howMany})`;
+                    }
+                    lastModifiedTaskId = taskId; undoToast.show();
+                } catch (e) {
+                    console.error(e); btn.disabled=false; btn.innerHTML=originalText; delete cardCol.dataset.isMoving;
+                }
+            }
+
+            async function revertTask(taskId) {
+                const cardCol = document.getElementById(`task-card-${taskId}`);
+                if (!cardCol) return;
+
+                const points = cardCol.dataset.points || 0;
+                const isMidAnimation = cardCol.dataset.isMoving === "to-completed";
+                if (isMidAnimation) {
+                    cardCol.dataset.isMoving = "cancelled";
+                    cardCol.style.opacity = '1';
+                    cardCol.style.transform = 'scale(1)';
+                }
+
+                try {
+                    const response = await fetch('@Url.Action("Revert")', { method: 'POST', headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token }, body: JSON.stringify({ id: taskId }) });
+                    if (!response.ok) throw new Error();
+                    const result = await response.json();
+
+                    if (result.newTotalPoints !== undefined) {
+                        const nav = document.getElementById('nav-points-display');
+                        if (nav) { nav.innerText = result.newTotalPoints; nav.style.color='#ef4444'; setTimeout(()=>nav.style.color='',500); }
+                    }
+
+                    const wasFullyCompleted = completedList.contains(cardCol);
+                    if (wasFullyCompleted || isMidAnimation) {
+                        moveCardToActive(cardCol, wasFullyCompleted);
+                    }
+
+                    updateProgressUI(cardCol, result.completedCount, result.howMany, false);
+
+                    // Restore complex button structure
+                    const btn = cardCol.querySelector('.btn-complete');
+                    const btnContainer = cardCol.querySelector('.button-container');
+                    if(btnContainer) {
+                        const isOverdue = cardCol.dataset.isOverdue === 'true';
+                        const btnClass = isOverdue ? "btn-outline-danger" : "btn-primary";
+                        btnContainer.innerHTML = getCheckInButtonHtml(btnClass, points);
+                    }
+
+                } catch (e) { console.error(e); }
+            }
+
+            function updateProgressUI(cardCol, current, total, isCompleted) {
+                const badge = cardCol.querySelector('.completed-label');
+                const bar = cardCol.querySelector('.progress-bar');
+                const progressClass = isCompleted ? 'bg-success' : 'bg-primary-theme';
+
+                if (badge) {
+                    badge.textContent = `${current}/${total}`;
+                    badge.classList.remove('bg-success', 'bg-primary-theme');
+                    badge.classList.add(progressClass);
+                }
+
+                if (bar) {
+                    bar.style.width = `${(current/total)*100}%`;
+                    if (isCompleted) {
+                        bar.classList.remove('progress-bar-striped', 'progress-bar-animated', 'bg-primary-theme', 'bg-danger');
+                        bar.classList.add('bg-success');
+                    } else {
+                        bar.classList.add('progress-bar-striped', 'progress-bar-animated');
+                        bar.classList.remove('bg-success');
+                        bar.classList.add('bg-primary-theme');
+                    }
+                }
+            }
+
+            function moveCardToCompleted(cardCol) {
+                cardCol.style.opacity = '0'; cardCol.style.transform = 'scale(0.9)';
+                const points = cardCol.dataset.points || 0;
+
+                setTimeout(() => {
+                    if (cardCol.dataset.isMoving === "cancelled") { delete cardCol.dataset.isMoving; return; }
+
+                    completedList.appendChild(cardCol);
+                    const btnC = cardCol.querySelector('.button-container');
+                    if(btnC) {
+                        btnC.innerHTML = '<div class="text-center py-2"><span class="text-success fw-bold"><i class="bi bi-check2-all me-1"></i>Completed</span></div>';
+                    }
+
+                    const card = cardCol.querySelector('.card');
+                    if(card) {
+                        card.classList.remove('shadow-sm');
+                        // ADDED: Explicitly remove urgency borders so it reverts to gray
+                        card.classList.remove('border-danger', 'border-warning', 'border-2');
+                    }
+
+                    updateGlobalCounts(1);
+                    completedNavItem.classList.remove('d-none');
+                    cardCol.style.opacity = '1'; cardCol.style.transform = 'scale(1)';
+                    checkEmptyState();
+                    delete cardCol.dataset.isMoving;
+                }, 300);
+            }
+
+            function moveCardToActive(cardCol, shouldUpdateCounts) {
+                cardCol.style.opacity = '0';
+                const frequency = cardCol.dataset.frequency;
+                const isOverdue = cardCol.dataset.isOverdue === 'true';
+                const isUrgent = cardCol.dataset.isUrgent === 'true';
+                const deadlineText = cardCol.dataset.deadlineText;
+                const points = cardCol.dataset.points || 0;
+
+                setTimeout(() => {
+                    try {
+                        insertCardSorted(cardCol);
+
+                        const btnC = cardCol.querySelector('.button-container');
+                        if(btnC) {
+                            const btnClass = isOverdue ? "btn-outline-danger" : "btn-primary";
+                            // Use helper to restore complex button
+                            btnC.innerHTML = getCheckInButtonHtml(btnClass, points);
+                        }
+
+                        const dateDisplay = cardCol.querySelector('.date-display');
+                        if(dateDisplay) {
+                            const dateSpan = dateDisplay.lastElementChild;
+                            let icon = 'bi-calendar';
+                            let text = 'Active';
+                            let className = '';
+
+                            if(frequency === 'Daily') { text = 'Ends Tonight'; icon = 'bi-sun'; }
+                            else if (frequency === 'Weekly') { text = 'Ends Sunday'; icon = 'bi-calendar-week'; className = isUrgent ? 'text-warning fw-bold' : ''; }
+                            else if (frequency === 'OneTime') {
+                                text = deadlineText || 'Upcoming';
+                                icon = 'bi-calendar-event';
+                                if(isOverdue) {
+                                    text = 'Overdue: ' + text;
+                                    icon = 'bi-exclamation-triangle-fill';
+                                    className = 'text-danger fw-bold';
+                                } else if (isUrgent) {
+                                    className = 'text-warning fw-bold';
+                                }
+                            }
+                            dateSpan.className = className;
+                            dateSpan.innerHTML = `<i class="bi ${icon} me-1"></i>${text}`;
+                        }
+
+                        const card = cardCol.querySelector('.card');
+                        let borderClass = '';
+                        if(isOverdue) borderClass = 'border-danger border-2';
+                        else if(isUrgent) borderClass = 'border-warning border-2';
+
+                        if(card) {
+                            // Reset classes
+                            card.className = `card h-100 shadow-sm ${borderClass}`;
+                        }
+
+                        if (shouldUpdateCounts) updateGlobalCounts(-1);
+                        checkEmptyState();
+
+                    } catch (err) { console.error(err); }
+                    finally {
+                        cardCol.style.opacity = '1';
+                        cardCol.style.transform = 'scale(1)';
+                        delete cardCol.dataset.isMoving;
+                    }
+                }, 300);
+            }
+
+            function insertCardSorted(card) {
+                const sortMode = document.getElementById('sortOrderSelect').value;
+                const children = Array.from(activeList.children);
+                if (children.length === 0) { activeList.appendChild(card); return; }
+
+                const cPrio = parseInt(card.dataset.priority) || 4;
+                const cTime = parseInt(card.dataset.deadlineTicks) || 0;
+                const cTitle = (card.dataset.title || "").toLowerCase();
+
+                let inserted = false;
+                for (let child of children) {
+                    if (child === card) continue;
+                    const oPrio = parseInt(child.dataset.priority) || 4;
+                    const oTime = parseInt(child.dataset.deadlineTicks) || 0;
+                    const oTitle = (child.dataset.title || "").toLowerCase();
+
+                    let shouldInsert = false;
+                    if (sortMode === 'title') { if (cTitle < oTitle) shouldInsert = true; }
+                    else { if (cPrio < oPrio) shouldInsert = true; else if (cPrio === oPrio && cTime < oTime) shouldInsert = true; }
+
+                    if (shouldInsert) { activeList.insertBefore(card, child); inserted = true; break; }
+                }
+                if (!inserted) activeList.appendChild(card);
+            }
+
+            function updateGlobalCounts(changeToCompleted) {
+                const currentActive = parseInt(activeCountEl.innerText) || 0;
+                const currentCompleted = parseInt(completedCountEl.innerText) || 0;
+                activeCountEl.innerText = Math.max(0, currentActive - changeToCompleted);
+                completedCountEl.innerText = Math.max(0, currentCompleted + changeToCompleted);
+            }
+
+            function checkEmptyState() {
+                const a = parseInt(activeCountEl.innerText) || 0;
+                const c = parseInt(completedCountEl.innerText) || 0;
+                activeEmptyState.className = a === 0 ? 'text-center py-5' : 'd-none';
+                if(c === 0) {
+                    completedNavItem.classList.add('d-none');
+                    if(document.getElementById('completed-tab').classList.contains('active')) {
+                        const triggerEl = document.getElementById('active-tab');
+                        if(triggerEl) new bootstrap.Tab(triggerEl).show();
+                    }
+                } else { completedNavItem.classList.remove('d-none'); }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,345 @@
+﻿@model IEnumerable<Balance.Models.Prize>
+@{
+    ViewData["Title"] = "Rewards";
+    int currentPoints = ViewBag.CurrentPoints;
+}
+
+<div class="container py-4">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="wallet-card p-4 p-lg-5 position-relative overflow-hidden rounded-4 shadow-lg">
+                <div class="position-absolute top-0 start-0 w-100 h-100">
+                    <div class="position-absolute" style="top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);"></div>
+                    <div class="position-absolute" style="bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);"></div>
+                </div>
+
+                <div class="position-relative z-2 text-center">
+                    <div class="mb-3">
+                        <span class="badge bg-white text-theme fw-semibold px-3 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-wallet2 me-1"></i> Points Balance
+                        </span>
+                    </div>
+
+                    <h1 class="display-2 fw-bold mb-3 text-white">
+                        @currentPoints
+                        <span class="fs-4 opacity-85 fw-normal">points</span>
+                    </h1>
+
+                    <p class="text-white-75 mb-4 fs-5">
+                        Redeem rewards for your hard-earned points
+                    </p>
+
+                    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+                        <button class="btn btn-hero-action btn-lg px-4 py-2 rounded-3 shadow-sm d-flex align-items-center"
+                                data-bs-toggle="modal"
+                                data-bs-target="#createPrizeModal">
+                            <i class="bi bi-plus-circle-fill fs-5 me-2"></i>
+                            Create New Reward
+                        </button>
+                    </div>
+                </div>
+
+                <i class="bi bi-trophy-fill position-absolute text-white opacity-10" style="font-size: 8rem; left: 30px; top: 30px;"></i>
+                <i class="bi bi-star-fill position-absolute text-white opacity-10" style="font-size: 6rem; right: 40px; bottom: 40px;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success border-0 shadow-sm rounded-3 d-flex align-items-center fade show" role="alert" style="background-color: var(--success-soft); color: var(--success-text);">
+                    <div class="me-3"><i class="bi bi-check-circle-fill fs-3"></i></div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold mb-1">Success!</h6>
+                        <div class="small">@TempData["SuccessMessage"]</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger border-0 shadow-sm rounded-3 d-flex align-items-center fade show" role="alert" style="background-color: var(--danger-soft); color: var(--danger-text);">
+                    <div class="me-3"><i class="bi bi-exclamation-triangle-fill fs-3"></i></div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold mb-1">Oops!</h6>
+                        <div class="small">@TempData["ErrorMessage"]</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-end border-bottom pb-3" style="border-color: var(--border-color) !important;">
+                <div>
+                    <h2 class="fw-bold mb-1 d-flex align-items-center">
+                        <div class="icon-circle theme-primary me-3" style="width: 48px; height: 48px;">
+                            <i class="bi bi-gift-fill fs-5"></i>
+                        </div>
+                        <span class="text-dark">Rewards Catalog</span>
+                    </h2>
+                    <p class="text-muted mb-0">Exchange your points for exciting rewards</p>
+                </div>
+                <div class="text-end">
+                    <span class="badge theme-primary fw-semibold px-3 py-2 rounded-3">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>
+                        @Model.Count() @(Model.Count() == 1 ? "Reward" : "Rewards")
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        @if (!Model.Any())
+        {
+            <div class="col-12">
+                <div class="empty-state text-center py-5 px-3 rounded-4 border border-dashed" style="background-color: var(--primary-soft); border-color: var(--primary-base);">
+                    <div class="mb-4">
+                        <div class="icon-circle mx-auto mb-3 lg theme-primary">
+                            <i class="bi bi-gift fs-1"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3" style="color: var(--text-main);">No rewards yet</h4>
+                    <p class="text-muted mb-4 px-lg-5">Create your first reward to start motivating yourself!</p>
+
+                    <button class="btn btn-primary fw-bold px-4 py-2 rounded-3 shadow-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#createPrizeModal">
+                        Create First Reward
+                    </button>
+                </div>
+            </div>
+        }
+
+        @foreach (var prize in Model)
+        {
+            var canAfford = currentPoints >= prize.Cost;
+            var progress = Math.Min(100, (double)currentPoints / prize.Cost * 100);
+            var progressClass = canAfford ? "bg-success" : "bg-theme";
+
+            <div class="col">
+                <div class="card card-reward h-100 shadow-sm border-0 overflow-hidden transition-all position-relative">
+
+                    <div class="card-decoration-subtle w-100 h-100 position-absolute top-0 end-0"></div>
+
+                    <div class="card-body d-flex flex-column p-4 position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-circle theme-primary d-flex align-items-center justify-content-center"
+                                 style="width: 56px; height: 56px; font-size: 1.5rem;">
+                                @if (prize.Cost <= 100)
+                                {
+                                    <i class="bi bi-cup-hot-fill"></i>
+                                }
+                                else if (prize.Cost <= 500)
+                                {
+
+                                    <i class="bi bi-film"></i>
+                                }
+                                else
+                                {
+
+                                    <i class="bi bi-airplane-fill"></i>
+                                }
+                            </div>
+
+                            <button class="btn btn-sm btn-light border-0 rounded-circle text-muted js-delete-trigger"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deletePrizeModal"
+                                    data-id="@prize.Id"
+                                    data-title="@prize.Title"
+                                    style="width: 36px; height: 36px;">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </div>
+
+                        <h5 class="fw-bold mb-2" style="color: var(--text-main); min-height: 3rem;">@prize.Title</h5>
+
+                        @if (!string.IsNullOrEmpty(prize.Description))
+                        {
+                            <p class="text-muted small mb-3 flex-grow-1" style="min-height: 4rem; line-height: 1.5;">@prize.Description</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted small mb-3 flex-grow-1 fst-italic" style="min-height: 4rem; line-height: 1.5;">A well-deserved treat.</p>
+                        }
+
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <span class="fw-bold fs-3" style="color: var(--text-main);">@prize.Cost</span>
+                                    <span class="text-muted ms-1">points</span>
+                                </div>
+                                @if (!canAfford)
+                                {
+                                    <span class="badge theme-secondary fw-semibold px-3 py-1 rounded-pill">
+                                        <i class="bi bi-lock me-1"></i> @(prize.Cost - currentPoints) more
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge theme-success fw-semibold px-3 py-1 rounded-pill">
+                                        <i class="bi bi-check-circle me-1"></i> Ready
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="progress rounded-pill" style="height: 8px; background-color: var(--bg-app);">
+                                    <div class="progress-bar rounded-pill @progressClass" role="progressbar" style="width: @progress%"></div>
+                                </div>
+                            </div>
+
+                            <form asp-action="Redeem" method="post">
+                                <input type="hidden" name="id" value="@prize.Id" />
+                                <button type="submit"
+                                        class="btn w-100 rounded-pill py-2 fw-bold shadow-sm transition-all @(canAfford ? "btn-redeem" : "btn-light")"
+                                        @(!canAfford ? "disabled" : "")
+                                        style="@(!canAfford ? "color: var(--text-muted); cursor: not-allowed;" : "")">
+                                    @if (canAfford)
+                                    {
+                                        <span><i class="bi bi-stars me-2"></i>Redeem Now</span>
+                                    }
+                                    else
+                                    {
+                                        <span><i class="bi bi-lock me-2"></i>Locked</span>
+                                    }
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade modal-clean" id="createPrizeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden">
+            <div class="modal-header border-0 pb-0 pe-4 pt-4">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-5 pb-5 pt-0">
+                <div class="text-center mb-4">
+                    <div class="icon-circle theme-primary lg mx-auto mb-3 shadow-sm">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+                    <h4 class="fw-bold" style="color: var(--text-main)">New Reward</h4>
+                    <p class="text-muted">Define something to treat yourself with.</p>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    <div class="form-floating mb-3">
+                        <input name="Title" type="text" class="form-control input-theme" id="prizeTitle" placeholder="Reward Title" required>
+                        <label for="prizeTitle">Reward Title</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input name="Cost" type="number" class="form-control input-theme" id="prizeCost" value="50" min="1" placeholder="Cost" required>
+                        <label for="prizeCost">Cost (Points)</label>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <textarea name="Description" class="form-control input-theme" id="prizeDesc" placeholder="Description" style="height: 100px"></textarea>
+                        <label for="prizeDesc">Description (Optional)</label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-md fw-bold">
+                            Create Reward
+                        </button>
+                        <button type="button" class="btn btn-light rounded-pill py-2 text-muted" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-clean" id="deletePrizeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden">
+            <div class="modal-header border-0 pb-0 pe-4 pt-4">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-5 text-center pt-0">
+                <div class="mb-4">
+                    <div class="icon-circle theme-danger lg mx-auto shadow-sm">
+                        <i class="bi bi-trash3-fill"></i>
+                    </div>
+                </div>
+
+                <h4 class="fw-bold mb-3" style="color: var(--text-main);">Delete Reward?</h4>
+                <p class="text-muted mb-4">
+                    Are you sure you want to delete <br>
+                    <span class="fw-bold js-delete-title" style="color: var(--text-main); font-size: 1.1em;"></span>?
+                </p>
+
+                <form method="post" asp-action="Delete">
+                    <input type="hidden" name="id" class="js-delete-id" />
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm">
+                            Yes, Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // 1. DELETE MODAL DATA PASSING (Fixed)
+            // We listen for the modal opening event instead of clicking the button.
+            // This prevents double-triggering the backdrop.
+            const deleteModal = document.getElementById('deletePrizeModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', event => {
+                    // Button that triggered the modal
+                    const button = event.relatedTarget;
+
+                    // Extract info from data-* attributes
+                    const id = button.getAttribute('data-id');
+                    const title = button.getAttribute('data-title');
+
+                    // Update the modal's content
+                    const titleSpan = deleteModal.querySelector('.js-delete-title');
+                    const idInput = deleteModal.querySelector('.js-delete-id');
+
+                    if (titleSpan) titleSpan.textContent = title;
+                    if (idInput) idInput.value = id;
+                });
+            }
+
+            // 2. SIMPLE CARD ANIMATION (No changes needed here)
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const progressBar = entry.target.querySelector('.progress-bar');
+                        if (progressBar) {
+                            const width = progressBar.style.width;
+                            progressBar.style.width = '0';
+                            // Force reflow
+                            void progressBar.offsetWidth;
+                            progressBar.style.width = width;
+                        }
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.card-reward').forEach(card => observer.observe(card));
+        });
+    </script>
+}

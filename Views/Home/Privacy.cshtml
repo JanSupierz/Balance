@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<div class="container py-5">
+
+    <h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
+
+    <div class="card p-4 shadow-sm">
+        <p class="lead text-muted">
+            This policy outlines how Balance collects, uses, and protects your personal information. We are committed to transparency regarding your data.
+        </p>
+
+        <h4 class="fw-bold mt-4 mb-3">1. Information We Collect</h4>
+        <p class="text-muted">
+            We collect information primarily to operate and improve the service. This includes:
+        </p>
+        <ul>
+            <li>**Personal Identification Data:** Your Username and Email (provided upon registration via ASP.NET Identity).</li>
+            <li>**Service Data:** Tasks created, points earned, rewards redeemed, and user roles (Admin/User). This data is essential for the core functionality of the Balance system (gamification and habit tracking).</li>
+            <li>**Technical Data:** Browser type, operating system, and IP address (standard web logs).</li>
+        </ul>
+
+        <h4 class="fw-bold mt-4 mb-3">2. How We Use Your Data</h4>
+        <p class="text-muted">
+            Your data is used strictly for the following purposes:
+        </p>
+        <ul class="list-unstyled">
+            <li class="mb-2">
+                <i class="bi bi-check-circle-fill me-2" style="color: var(--primary-base);"></i>To provide core service functionality (tracking tasks, managing points).
+            </li>
+            <li class="mb-2">
+                <i class="bi bi-check-circle-fill me-2" style="color: var(--primary-base);"></i>Account authentication and security.
+            </li>
+            <li class="mb-2">
+                <i class="bi bi-check-circle-fill me-2" style="color: var(--primary-base);"></i>Internal diagnostics and service improvement.
+            </li>
+        </ul>
+
+        <h4 class="fw-bold mt-4 mb-3">3. Data Storage and Security</h4>
+        <p class="text-muted">
+            All user data, including task details and account information, is stored securely. We utilize standard security practices provided by ASP.NET Core and Microsoft Entity Framework to protect data integrity and prevent unauthorized access. Task and score data is not shared with third parties.
+        </p>
+
+        <h4 class="fw-bold mt-4 mb-3">4. Data Deletion</h4>
+        <p class="text-muted">
+            You may delete your account at any time via the Profile Settings page (Account Management). Deleting your account will permanently remove all associated tasks, points, rewards, and personal data from our database.
+        </p>
+
+        <p class="text-muted small mt-5 pt-3 border-top">
+            *This policy is effective as of December 2025. Please note that this is a sample policy designed for a closed, internal gamification app and may not meet all legal requirements for publicly accessible applications.*
+        </p>
+    </div>
+</div>

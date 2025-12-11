@@ -1,0 +1,28 @@
+﻿@model Balance.Models.UserTask
+
+<div class="dropdown">
+    <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+        <i class="bi bi-three-dots-vertical"></i>
+    </button>
+    <ul class="dropdown-menu border-0 shadow-sm" style="border-radius: 12px;">
+        <li>
+            <a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.Id">
+                <i class="bi bi-pencil-square me-2 text-secondary"></i>Edit
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Details" asp-route-id="@Model.Id">
+                <i class="bi bi-info-circle me-2 text-secondary"></i>Details
+            </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <button class="dropdown-item text-danger js-delete-trigger"
+                    data-id="@Model.Id"
+                    data-title="@Model.Title"
+                    data-target="#deleteTaskModal">
+                <i class="bi bi-trash me-2"></i>Delete
+            </button>
+        </li>
+    </ul>
+</div>

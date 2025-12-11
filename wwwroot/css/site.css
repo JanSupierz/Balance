@@ -1,0 +1,686 @@
+/* =========================================
+   1. THEME DEFINITIONS
+   ========================================= */
+
+/* DEFAULT (TRUE BLUE) */
+:root {
+    /* Brand Colors */
+    --primary-soft: #eff6ff;
+    --primary-base: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-text: #2563eb;
+    /* Functional Colors (Backgrounds) */
+    --success-soft: #ecfdf5;
+    --danger-soft: #fef2f2;
+    --warning-soft: #fffbeb;
+    /* Functional Text Colors */
+    --success-text: #059669;
+    --danger-text: #dc2626;
+    --warning-text: #d97706;
+    /* Backgrounds & Text */
+    --bg-app: #f8fafc;
+    --bg-surface: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    /* Borders & Shadows */
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+    --primary-soft: #334155;
+    --primary-base: #60a5fa;
+    --primary-hover: #3b82f6;
+    --primary-text: #60a5fa;
+    --success-soft: #064e3b;
+    --success-text: #34d399;
+    --danger-soft: #7f1d1d;
+    --danger-text: #f87171;
+    --warning-soft: #451a03;
+    --warning-text: #fbbf24;
+    --bg-app: #0f172a;
+    --bg-surface: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --shadow-sm: none;
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+/* PINK MODE */
+[data-theme="pink"] {
+    --primary-soft: #fdf2f8;
+    --primary-base: #db2777;
+    --primary-hover: #be185d;
+    --primary-text: #db2777;
+    --bg-app: #fff1f2;
+    --bg-surface: #ffffff;
+    --text-main: #4a044e;
+    --text-muted: #831843;
+    --border-color: #fbcfe8;
+}
+
+/* =========================================
+   2. GLOBAL RESET & BASE
+   ========================================= */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =========================================
+   3. COMPONENT OVERRIDES
+   ========================================= */
+.card, .card-hover, .card-clean, .card-reward {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-main);
+}
+
+.card-clean {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.card-hover:hover, .card-reward:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md) !important;
+    border-color: var(--primary-base) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-dark {
+    color: var(--text-main) !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-base);
+    border-color: var(--primary-base);
+    color: #fff;
+    transition: background-color 0.2s;
+}
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+        color: #fff;
+    }
+
+.btn-outline-primary {
+    color: var(--primary-base);
+    border-color: var(--primary-base);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-base);
+        color: #fff;
+    }
+
+.btn-light {
+    background-color: var(--bg-app);
+    border-color: var(--border-color);
+    color: var(--text-main);
+}
+
+    .btn-light:hover {
+        background-color: var(--border-color);
+    }
+
+.form-control, .form-select {
+    background-color: var(--bg-surface);
+    border-color: var(--border-color);
+    color: var(--text-main);
+}
+
+    .form-control:focus, .form-select:focus {
+        background-color: var(--bg-surface);
+        border-color: var(--primary-base);
+        color: var(--text-main);
+        box-shadow: 0 0 0 0.25rem var(--primary-soft) !important;
+        outline: 0 !important;
+    }
+
+[data-theme="dark"] .form-control:disabled,
+[data-theme="dark"] .form-control[readonly] {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-main) !important;
+    opacity: 0.75;
+}
+
+.input-group:focus-within .input-group-text {
+    border-color: var(--primary-base) !important;
+}
+
+.dropdown-menu, .modal-content {
+    background-color: var(--bg-surface);
+    border-color: var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-main) !important;
+}
+
+.dropdown-header {
+    color: var(--text-main) !important;
+    opacity: 0.8;
+}
+
+.dropdown-item:hover {
+    background-color: var(--primary-soft);
+}
+
+/* =========================================
+   4. THEMES & BADGES
+   ========================================= */
+.bg-primary-theme {
+    background-color: var(--primary-base) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="contrast"] .bg-primary-theme {
+    color: #000000 !important;
+}
+
+.card.border-danger {
+    border-color: var(--danger-text) !important;
+    background-color: var(--bg-surface) !important;
+}
+
+.card.border-warning {
+    border-color: var(--warning-text) !important;
+    background-color: var(--bg-surface) !important;
+}
+
+.badge-tag {
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+    .icon-circle.lg {
+        width: 64px;
+        height: 64px;
+        font-size: 1.5rem;
+    }
+
+    .icon-circle.md {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+
+.theme-primary {
+    background-color: var(--primary-soft);
+    color: var(--primary-text);
+}
+
+.theme-success {
+    background-color: var(--success-soft);
+    color: var(--success-text);
+}
+
+.theme-danger {
+    background-color: var(--danger-soft);
+    color: var(--danger-text);
+}
+
+.theme-warning {
+    background-color: var(--warning-soft);
+    color: var(--warning-text);
+}
+
+.theme-secondary {
+    background-color: var(--border-color);
+    color: var(--text-main);
+}
+
+/* =========================================
+   5. TABLES & HEADERS
+   ========================================= */
+.table {
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+    .table thead {
+        background-color: var(--primary-soft);
+    }
+
+        .table thead th {
+            color: var(--primary-text) !important;
+            font-weight: 700;
+        }
+
+/* =========================================
+   6. UTILS
+   ========================================= */
+.progress {
+    background-color: var(--border-color);
+}
+
+.progress-bar {
+    transition: width 0.4s ease;
+}
+
+.btn-pill-action {
+    border-radius: 50rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    font-weight: 600;
+}
+
+.transition-all {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-soft-danger {
+    background-color: var(--danger-soft);
+    color: var(--danger-text);
+    border: none;
+    transition: all 0.2s;
+}
+
+    .btn-soft-danger:hover {
+        background-color: var(--danger-text);
+        color: white;
+    }
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+.nav-pills .nav-link {
+    color: var(--text-main) !important;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+    .nav-pills .nav-link:hover {
+        background-color: var(--primary-soft) !important;
+        color: var(--primary-text) !important;
+    }
+
+    .nav-pills .nav-link.active,
+    .nav-pills .nav-link.active:focus,
+    .nav-pills .nav-link.active:hover {
+        background-color: var(--primary-base) !important;
+        color: white !important;
+        font-weight: 700;
+    }
+
+/* =========================================
+   7. DOMAIN SPECIFIC
+   ========================================= */
+.hero-section {
+    padding: 4rem 0;
+    background: radial-gradient(circle at top right, var(--primary-soft), var(--bg-surface));
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.action-card {
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    background-color: var(--bg-surface);
+    height: 100%;
+    text-decoration: none;
+    color: var(--text-main);
+    display: block;
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+}
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-base);
+        color: var(--text-main);
+    }
+
+.icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--primary-soft);
+    color: var(--primary-text);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-base) 0%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.avatar-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 5px rgba(118, 75, 162, 0.3);
+}
+
+.navbar-theme {
+    background-color: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+    .navbar-theme .navbar-brand, .navbar-theme .nav-link {
+        color: var(--text-muted) !important;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+        .navbar-theme .nav-link:hover, .navbar-theme .nav-link.active {
+            color: var(--primary-base) !important;
+        }
+
+    .navbar-theme .navbar-brand {
+        color: var(--primary-base) !important;
+    }
+
+.navbar-toggler {
+    border-color: var(--border-color);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(100, 116, 139, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+    opacity: 0.8;
+}
+
+.footer-theme {
+    background-color: var(--bg-surface) !important;
+    border-top: 1px solid var(--border-color) !important;
+    color: var(--text-muted) !important;
+}
+
+    .footer-theme a {
+        color: var(--primary-base);
+        text-decoration: none;
+    }
+
+.wallet-card {
+    background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%) !important;
+    border: none;
+    border-radius: 20px;
+    color: white !important;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(180, 83, 9, 0.3);
+}
+
+    .wallet-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .wallet-card h6 {
+        color: rgba(255,255,255,0.8) !important;
+    }
+
+.btn-redeem {
+    background-color: #fff7ed;
+    color: #d97706;
+    border: 1px solid #ffedd5;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+    .btn-redeem:hover:not(:disabled) {
+        background-color: #f59e0b;
+        color: white;
+        border-color: #f59e0b;
+        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+    }
+
+    .btn-redeem:disabled {
+        background-color: #f3f4f6;
+        color: #9ca3af;
+        border-color: #e5e7eb;
+        cursor: not-allowed;
+    }
+
+.card-reward {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+    .card-reward:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+
+.task-col {
+    transition: all 0.3s ease-in-out;
+}
+
+.tag-wrapper {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+
+.tag-label {
+    transition: all 0.2s;
+    padding: 0.5em 0.8em;
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-delete-tag {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--danger-text);
+    color: white;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tag-wrapper:hover .btn-delete-tag {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.btn-delete-tag:hover {
+    background: #b91c1c;
+    transform: scale(1.1);
+}
+
+.site-main .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#nav-points-display-container {
+    color: var(--primary-base) !important;
+    font-weight: 700;
+}
+
+    #nav-points-display-container span {
+        color: var(--primary-base) !important;
+        transition: color 0.3s ease;
+    }
+
+/* =========================================
+   8. NEW ADDITIONS (Forms & Modals)
+   ========================================= */
+
+.modal-clean .modal-content {
+    border: none;
+    border-radius: 24px;
+    background-color: var(--bg-surface);
+    box-shadow: var(--shadow-md);
+}
+
+.modal-clean .modal-header .btn-close {
+    background-color: var(--bg-app);
+    border-radius: 50%;
+    padding: 0.5rem;
+    opacity: 0.5;
+    transition: all 0.2s;
+}
+
+    .modal-clean .modal-header .btn-close:hover {
+        opacity: 1;
+        background-color: var(--danger-soft);
+        color: var(--danger-text);
+    }
+
+.input-theme {
+    background-color: var(--bg-app) !important;
+    border: 1px solid transparent;
+    border-radius: 12px !important;
+    color: var(--text-main) !important;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+    .input-theme:focus {
+        background-color: var(--bg-surface) !important;
+        border-color: var(--primary-base);
+        box-shadow: 0 0 0 4px var(--primary-soft) !important;
+    }
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--primary-base);
+    font-weight: 600;
+    opacity: 1;
+}
+
+.form-floating > label {
+    color: var(--text-muted);
+}
+
+/* =========================================
+   9. WALLET BANNER THEME OVERRIDES & READABILITY
+   ========================================= */
+
+.wallet-card .text-white-75,
+.wallet-card .opacity-85 {
+    color: rgba(255, 255, 255, 0.95) !important;
+    opacity: 1 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* --- Theme Specific Banner Colors --- */
+
+/* DEFAULT THEME (Blue) - Overrides the hardcoded orange */
+:root:not([data-theme]) .wallet-card,
+[data-theme="light"] .wallet-card {
+    background: linear-gradient(135deg, var(--primary-base) 0%, var(--primary-hover) 100%) !important;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25) !important; /* Soft blue shadow */
+}
+
+/* DARK MODE - Deep indigo/purple gradient */
+[data-theme="dark"] .wallet-card {
+    /* Using slightly deeper blues than the primary base for a richer dark mode header */
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important; /* Darker shadow for depth */
+    border: 1px solid rgba(255,255,255,0.1) !important; /* Subtle highlight border */
+}
+
+/* PINK MODE - Hot pink gradient */
+[data-theme="pink"] .wallet-card {
+    background: linear-gradient(135deg, var(--primary-base) 0%, #be185d 100%) !important;
+    box-shadow: 0 8px 20px rgba(219, 39, 119, 0.25) !important; /* Soft pink shadow */
+}
+
+/* =========================================
+   10. DYNAMIC THEME UTILS & REFINEMENTS
+   ========================================= */
+
+/* Force elements to use the active theme color */
+.text-theme {
+    color: var(--primary-base) !important;
+}
+
+.bg-theme {
+    background-color: var(--primary-base) !important;
+}
+
+/* Hero Action Button: Always white background, text takes theme color */
+.btn-hero-action {
+    background-color: #ffffff !important;
+    color: var(--primary-base) !important;
+    border: none;
+    font-weight: 700;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .btn-hero-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+/* Much subtler gradient for reward cards */
+.card-decoration-subtle {
+    background: radial-gradient(circle at top right, var(--primary-base), transparent 50%);
+    opacity: 0.03 !important; /* Extremely subtle tint */
+    pointer-events: none;
+}

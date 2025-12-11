@@ -1,0 +1,51 @@
+## Visual Studio & .NET Core ##
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.cache
+*.pdb
+*.nupkg
+*.dll
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## SQLite Database (CRITICAL) ##
+# Prevents binary merge conflicts and leaking test data
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+## Entity Framework & Identity Secrets ##
+# Keep the base 'appsettings.json', but ignore local overrides/secrets
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+## ASP.NET Core Web ##
+# Ignore runtime logs
+*.log
+
+# Front-end dependencies (if you use npm/LibMan)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# User Uploads (Optional: Uncomment if you store uploads here)
+# wwwroot/uploads/
+
+## Visual Studio Code (if used) ##
+.vscode/
+
+## Test Results ##
+TestResults/
+
+## Operating System Files ##
+.DS_Store
+Thumbs.db

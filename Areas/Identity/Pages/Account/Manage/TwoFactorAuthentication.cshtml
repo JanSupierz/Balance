@@ -1,0 +1,87 @@
+﻿@page
+@using Microsoft.AspNetCore.Http.Features
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "Two-factor authentication (2FA)";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h4 class="fw-bold mb-4" style="color: var(--primary-base);">@ViewData["Title"]</h4>
+
+<div class="card card-clean p-4 shadow-sm border">
+
+    @{
+        var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
+        @if (consentFeature?.CanTrack ?? true)
+        {
+            @if (Model.Is2faEnabled)
+            {
+                if (Model.RecoveryCodesLeft == 0)
+                {
+                    <div class="alert alert-danger p-3 mb-3" style="background-color: var(--danger-soft); color: var(--danger-text);">
+                        <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                        <strong>You have no recovery codes left.</strong>
+                        <p class="mb-0 small">You must <a asp-page="./GenerateRecoveryCodes" style="color: var(--danger-text); text-decoration: underline;">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
+                    </div>
+                }
+                else if (Model.RecoveryCodesLeft == 1)
+                {
+                    <div class="alert alert-danger p-3 mb-3" style="background-color: var(--danger-soft); color: var(--danger-text);">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>You have 1 recovery code left.</strong>
+                        <p class="mb-0 small">You can <a asp-page="./GenerateRecoveryCodes" style="color: var(--danger-text); text-decoration: underline;">generate a new set of recovery codes</a>.</p>
+                    </div>
+                }
+                else if (Model.RecoveryCodesLeft <= 3)
+                {
+                    <div class="alert alert-warning p-3 mb-3" style="background-color: var(--warning-soft); color: var(--warning-text);">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+                        <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
+                        <p class="mb-0 small">You should <a asp-page="./GenerateRecoveryCodes" style="color: var(--warning-text); text-decoration: underline;">generate a new set of recovery codes</a>.</p>
+                    </div>
+                }
+
+                <h5 class="fw-bold mb-3" style="color: var(--primary-base);">2FA Enabled</h5>
+
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    @if (Model.IsMachineRemembered)
+                    {
+                        <form method="post" style="display: inline-block">
+                            <button type="submit" class="btn btn-sm btn-outline-primary btn-pill-action">Forget this browser</button>
+                        </form>
+                    }
+                    <a asp-page="./Disable2fa" class="btn btn-sm btn-danger btn-pill-action">Disable 2FA</a>
+                    <a asp-page="./GenerateRecoveryCodes" class="btn btn-sm btn-primary btn-pill-action">Reset recovery codes</a>
+                </div>
+            }
+
+            <h5 class="fw-bold mb-3" style="color: var(--primary-base);">Authenticator App</h5>
+            @if (!Model.HasAuthenticator)
+            {
+                <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary btn-pill-action">
+                    <i class="bi bi-plus-circle-fill me-1"></i> Add authenticator app
+                </a>
+            }
+            else
+            {
+                <div class="d-flex gap-2">
+                    <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-sm btn-outline-primary btn-pill-action">Set up authenticator app</a>
+                    <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-sm btn-outline-danger btn-pill-action">Reset authenticator app</a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-danger p-3" style="background-color: var(--danger-soft); color: var(--danger-text);">
+                <i class="bi bi-shield-fill-x me-2"></i>
+                <strong>Privacy and cookie policy have not been accepted.</strong>
+                <p class="mb-0 small">You must accept the policy before you can enable two factor authentication.</p>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

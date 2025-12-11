@@ -1,0 +1,44 @@
+﻿@model Balance.Models.PredefinedTask
+@using Balance.Models.Enums
+
+@{
+    ViewData["Title"] = "Template Details";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card card-clean shadow-sm border">
+                <div class="card-body p-4 text-center">
+
+                    <span class="badge theme-primary rounded-pill mb-3 px-3 py-2">@Model.Frequency</span>
+
+                    <h2 class="fw-bold" style="color: var(--text-main);">@Model.Title</h2>
+                    <p class="text-muted mb-4">@(Model.Description ?? "No description")</p>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background-color: var(--primary-soft);">
+                                <div class="fw-bold fs-4" style="color: var(--text-main);">@Model.HowManyTimes</div>
+                                <div class="text-uppercase text-muted small">Reps</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background-color: var(--warning-soft);">
+                                <div class="fw-bold fs-4" style="color: var(--warning-text);">
+                                    @Model.PointsPerClick <i class="bi bi-star-fill fs-6"></i>
+                                </div>
+                                <div class="text-uppercase text-muted small">Points</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-pill-action px-4">Edit</a>
+                        <a asp-action="Index" class="btn btn-light border btn-pill-action px-4">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

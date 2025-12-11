@@ -1,0 +1,27 @@
+﻿@page
+@model DownloadPersonalDataModel
+@{
+    ViewData["Title"] = "Download Your Data";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+
+<h4 class="fw-bold mb-4" style="color: var(--primary-base);">@ViewData["Title"]</h4>
+
+<div class="card card-clean p-4 shadow-sm border">
+
+    <p class="text-muted mb-4">
+        This feature allows you to download your personal data stored by our service.
+    </p>
+
+    <div>
+        <form method="post">
+            <button class="btn btn-primary btn-pill-action px-5" type="submit">
+                <i class="bi bi-cloud-download me-1"></i> Download Data
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

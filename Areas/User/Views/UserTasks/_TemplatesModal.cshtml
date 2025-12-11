@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Balance.Models.PredefinedTask>
+@using Balance.Models.Enums
+
+<div class="modal fade" id="templatesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-collection-fill me-2" style="color: var(--primary-base);"></i>Task Templates
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4 mt-2" style="background-color: var(--bg-app);">
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5 text-muted">
+                        <div class="icon-circle lg theme-primary mx-auto mb-3 opacity-50">
+                            <i class="bi bi-inbox"></i>
+                        </div>
+                        <p class="mt-3">No templates available yet.</p>
+                        <small>Ask an admin to create some!</small>
+                    </div>
+                }
+                else
+                {
+                    <div class="row row-cols-1 row-cols-md-2 g-3">
+                        @foreach (var tmpl in Model)
+                        {
+                            <div class="col">
+                                <div class="card h-100 shadow-sm card-hover border">
+                                    <div class="card-body d-flex flex-column">
+
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="fw-bold mb-0">@tmpl.Title</h6>
+
+                                            @{
+                                                // Used semantic theme classes
+                                                var badgeClass = tmpl.Frequency switch
+                                                {
+                                                    Frequency.Daily => "theme-primary",
+                                                    Frequency.Weekly => "theme-success",
+                                                    _ => "theme-warning"
+                                                };
+                                            }
+                                            <span class="badge @badgeClass rounded-pill">@tmpl.Frequency</span>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(tmpl.Description))
+                                        {
+                                            <p class="text-muted small mb-3 flex-grow-1">@tmpl.Description</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="text-muted small mb-3 flex-grow-1 fst-italic">No description.</p>
+                                        }
+
+                                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto" style="border-color: var(--border-color) !important;">
+
+                                            <div class="d-flex align-items-center gap-3 small">
+                                                <span class="text-muted" title="Repetitions">
+                                                    <i class="bi bi-arrow-repeat"></i> @tmpl.HowManyTimes
+                                                </span>
+                                                <span class="fw-bold" style="color: var(--warning-text);" title="Points">
+                                                    <i class="bi bi-star-fill"></i> @tmpl.PointsPerClick
+                                                </span>
+                                            </div>
+
+                                            <form asp-action="Import" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="templateId" value="@tmpl.Id" />
+                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold">
+                                                    <i class="bi bi-plus-lg"></i> Add
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="modal-footer border-top-0 pt-3">
+                <button type="button" class="btn btn-light rounded-pill px-4 border" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
