@@ -23,9 +23,12 @@
 
         @{
             var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
-            @if (consentFeature?.CanTrack ?? true)
+            if (consentFeature?.CanTrack ?? true)
             {
-                @if (Model.Is2faEnabled)
+                // --------------------------
+                // 2FA Enabled State
+                // --------------------------
+                if (Model.Is2faEnabled)
                 {
                     <div class="mb-4">
                         @if (Model.RecoveryCodesLeft == 0)
@@ -90,8 +93,25 @@
                     </div>
                 }
 
+                // --------------------------
+                // Authenticator App Section
+                // --------------------------
                 <div>
                     <h5 class="fw-bold mb-3" style="color: var(--text-main);">Authenticator App</h5>
+
+                    @* Pending Setup Warning *@
+                    @if (TempData["SetupPending"] != null && !Model.Is2faEnabled)
+                    {
+                        <div class="alert border-0 shadow-sm rounded-3 p-4 mb-3" style="background-color: var(--warning-soft); color: var(--warning-text);">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-exclamation-triangle-fill fs-3 me-2"></i>
+                                <strong>Authenticator setup not complete</strong>
+                            </div>
+                            <p class="mb-0 small">You started adding an authenticator app but have not finished scanning or verifying it.</p>
+                            <a asp-page="./EnableAuthenticator" class="btn btn-warning btn-sm mt-2">Continue Setup</a>
+                        </div>
+                    }
+
                     @if (!Model.HasAuthenticator)
                     {
                         <div class="text-center p-4 rounded-3 border border-dashed" style="background-color: var(--primary-soft);">
@@ -101,6 +121,17 @@
                             <p class="text-muted mb-3">Add an extra layer of security by using an authenticator app.</p>
                             <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary btn-pill-action shadow-sm">
                                 <i class="bi bi-plus-lg me-1"></i> Add Authenticator App
+                            </a>
+                        </div>
+                    }
+                    else if (!Model.Is2faEnabled)
+                    {
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-warning btn-pill-action shadow-sm">
+                                Complete Setup
+                            </a>
+                            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-outline-danger btn-pill-action">
+                                Reset App
                             </a>
                         </div>
                     }
