@@ -1,31 +1,46 @@
 ﻿@page
 @model ResetAuthenticatorModel
 @{
-    ViewData["Title"] = "Reset authenticator key";
+    ViewData["Title"] = "Reset Authenticator Key";
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
-<partial name="_StatusMessage" for="StatusMessage" />
-<h4 class="fw-bold mb-4" style="color: var(--primary-base);">@ViewData["Title"]</h4>
+<div class="card card-clean shadow-sm border border-danger">
+    <div class="card-body p-4 p-md-5 text-center">
 
-<div class="card card-clean p-4 shadow-sm border">
+        <div class="mb-4">
+            <div class="icon-circle lg theme-danger mx-auto shadow-sm">
+                <i class="bi bi-arrow-repeat fs-1"></i>
+            </div>
+        </div>
 
-    <div class="alert border-0 p-3 mb-4" role="alert" style="background-color: var(--warning-soft);">
-        <p class="mb-2 fw-bold" style="color: var(--warning-text);">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <strong>If you reset your authenticator key your authenticator app will not work until you reconfigure it.</strong>
+        <h4 class="fw-bold mb-3" style="color: var(--text-main);">Reset Authenticator?</h4>
+        <partial name="_StatusMessage" for="StatusMessage" />
+
+        <div class="alert alert-warning border-0 rounded-3 text-start mb-4" role="alert" style="background-color: var(--warning-soft); color: var(--warning-text);">
+            <div class="d-flex">
+                <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                <div>
+                    <strong>Warning:</strong> This process disables 2FA until you verify your authenticator app again.
+                    <p class="mb-0 mt-1 small opacity-75">
+                        If you do not complete the configuration immediately, you may verify your account recovery options first.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-muted small mb-4">
+            This action will invalidate your current authenticator app configuration. You will need to scan a new QR code to reconnect.
         </p>
-        <p class="mb-0 small text-muted">
-            This process disables 2FA until you verify your authenticator app.
-            If you do not complete your authenticator app configuration you may lose access to your account.
-        </p>
-    </div>
 
-    <div>
         <form id="reset-authenticator-form" method="post">
-            <button id="reset-authenticator-button" class="btn btn-danger btn-pill-action px-5" type="submit">
-                Reset authenticator key
-            </button>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a asp-page="./TwoFactorAuthentication" class="btn btn-light border btn-pill-action px-4">Cancel</a>
+                <button id="reset-authenticator-button" class="btn btn-danger btn-pill-action px-5 shadow-sm fw-bold" type="submit">
+                    Reset Key
+                </button>
+            </div>
         </form>
+
     </div>
 </div>

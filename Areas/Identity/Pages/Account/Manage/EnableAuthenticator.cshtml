@@ -5,52 +5,89 @@
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
-<partial name="_StatusMessage" for="StatusMessage" />
-<h4 class="fw-bold mb-4" style="color: var(--primary-base);">@ViewData["Title"]</h4>
+<div class="card card-clean shadow-sm border">
+    <div class="card-body p-4 p-md-5">
 
-<div class="card card-clean p-4 shadow-sm border">
-    <p class="text-muted">To use an authenticator app go through the following steps:</p>
-
-    <ol class="list-unstyled">
-        <li>
-            <p>
-                Download a two-factor authenticator app like Microsoft Authenticator or Google Authenticator.
-            </p>
-        </li>
-        <li>
-            <h6 class="fw-bold mb-2">Scan QR Code or Enter Key</h6>
-            <p>Scan the QR Code or enter this key <kbd style="color: var(--primary-text); background-color: var(--primary-soft); padding: 0.2rem 0.4rem; border-radius: 4px;">@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-
-            <div class="alert alert-info border-0" style="background-color: var(--primary-soft); color: var(--primary-text);">
-                Learn how to <a href="https://go.microsoft.com/fwlink/?Linkid=852423" style="color: var(--primary-text); text-decoration: underline;">enable QR code generation</a>.
+        <div class="d-flex align-items-center mb-4">
+            <div class="icon-circle md theme-primary me-3 shadow-sm">
+                <i class="bi bi-qr-code-scan"></i>
             </div>
+            <div>
+                <h4 class="fw-bold mb-0" style="color: var(--text-main);">@ViewData["Title"]</h4>
+                <p class="text-muted small mb-0">Secure your account with an authenticator app.</p>
+            </div>
+        </div>
 
-            <div id="qrCode"></div>
-            <div id="qrCodeData" data-url="@Model.AuthenticatorUri"></div>
-        </li>
-        <li>
-            <h6 class="fw-bold mb-2 mt-4">Verification</h6>
-            <p>
-                Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
-                with a unique code. Enter the code in the confirmation box below.
-            </p>
-            <div class="row">
-                <div class="col-md-8">
-                    <form id="send-code" method="post">
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Code" class="form-control" autocomplete="off" placeholder="Please enter the code." />
-                            <label asp-for="Input.Code" class="control-label form-label">Verification Code</label>
-                            <span asp-validation-for="Input.Code" class="text-danger"></span>
+        <partial name="_StatusMessage" for="StatusMessage" />
+
+        <div class="row">
+            <div class="col-md-12">
+                <p class="text-muted mb-4">Follow these steps to set up your authenticator app:</p>
+
+                <ol class="list-group list-group-numbered list-group-flush mb-4">
+                    <li class="list-group-item border-0 px-0 pb-4">
+                        <span class="fw-bold">Download the App</span>
+                        <p class="mb-0 text-muted small">Download a two-factor authenticator app like Microsoft Authenticator or Google Authenticator.</p>
+                    </li>
+
+                    <li class="list-group-item border-0 px-0 pb-4">
+                        <span class="fw-bold">Scan QR Code</span>
+                        <p class="text-muted small mb-3">Scan the QR Code below or enter the key manually.</p>
+
+                        <div class="row">
+                            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                                <div id="qrCode" class="d-inline-block p-2 border rounded bg-white"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 rounded bg-light border h-100 d-flex flex-column justify-content-center">
+                                    <small class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Manual Entry Key</small>
+                                    <code class="fs-5 fw-bold text-dark text-break">@Model.SharedKey</code>
+                                </div>
+                            </div>
                         </div>
-                        <button type="submit" class="w-100 btn btn-lg btn-primary btn-pill-action">Verify</button>
-                        <div asp-validation-summary="ModelOnly" class="text-danger small mt-2" role="alert"></div>
-                    </form>
-                </div>
+                    </li>
+
+                    <li class="list-group-item border-0 px-0 pt-2">
+                        <span class="fw-bold">Verify Setup</span>
+                        <p class="text-muted small mb-3">
+                            Once scanned, enter the verification code provided by your app below.
+                        </p>
+                        <form id="send-code" method="post">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Code" class="form-control" autocomplete="off" placeholder="Verification Code" />
+                                <label asp-for="Input.Code">Verification Code</label>
+                                <span asp-validation-for="Input.Code" class="text-danger small"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-pill-action px-5 shadow-sm fw-bold">
+                                Verify & Enable
+                            </button>
+                            <div asp-validation-summary="ModelOnly" class="text-danger small mt-2" role="alert"></div>
+                        </form>
+                    </li>
+                </ol>
             </div>
-        </li>
-    </ol>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/lib/qrcode.js"></script>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const uri = "@Html.Raw(Model.AuthenticatorUri)";
+            if (uri) {
+                new QRCode(document.getElementById("qrCode"), {
+                    text: uri,
+                    width: 150,
+                    height: 150,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            }
+        });
+    </script>
 }

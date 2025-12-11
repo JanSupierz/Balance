@@ -4,18 +4,48 @@
     ViewData["Title"] = "Log out";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
-        {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-            </form>
-        }
-        else
-        {
-            <p>You have successfully logged out of the application.</p>
-        }
-    }
-</header>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card card-clean shadow-sm border">
+            <div class="card-body p-5 text-center">
+
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <div class="mb-4">
+                        <div class="icon-circle lg theme-warning mx-auto shadow-sm" style="width: 80px; height: 80px;">
+                            <i class="bi bi-box-arrow-right fs-1"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-3" style="color: var(--text-main);">Ready to leave?</h2>
+                    <p class="text-muted mb-4">Select the button below to sign out of your account.</p>
+
+                    <form class="d-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                        <button type="submit" class="btn btn-danger btn-pill-action px-5 py-2 shadow-sm fw-bold w-100">
+                            Log Out
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="mb-4">
+                        <div class="icon-circle lg theme-success mx-auto shadow-sm" style="width: 80px; height: 80px;">
+                            <i class="bi bi-check-lg fs-1"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-3" style="color: var(--text-main);">Signed Out</h2>
+                    <p class="text-muted mb-4">You have successfully logged out of the application.</p>
+
+                    <div class="d-grid gap-2">
+                        <a href="/" class="btn btn-light border btn-pill-action">
+                            Return Home
+                        </a>
+                        <a asp-page="./Login" class="btn btn-primary btn-pill-action shadow-sm">
+                            Log In Again
+                        </a>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

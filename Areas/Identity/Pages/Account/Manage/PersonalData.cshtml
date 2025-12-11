@@ -5,32 +5,46 @@
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h4 class="fw-bold mb-4" style="color: var(--primary-base);">@ViewData["Title"]</h4>
+<div class="card card-clean shadow-sm border">
+    <div class="card-body p-4 p-md-5">
 
-<div class="card card-clean p-4 shadow-sm border">
-    <div class="row">
-        <div class="col-md-12">
-            <p class="text-muted">Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
-
-            <div class="alert alert-danger border-0 p-3 my-4" style="background-color: var(--danger-soft);">
-                <p class="mb-0 fw-bold" style="color: var(--danger-text);">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-                </p>
+        <div class="d-flex align-items-center mb-4">
+            <div class="icon-circle md theme-primary me-3 shadow-sm">
+                <i class="bi bi-person-vcard-fill"></i>
             </div>
+            <div>
+                <h4 class="fw-bold mb-0" style="color: var(--text-main);">@ViewData["Title"]</h4>
+                <p class="text-muted small mb-0">Manage your stored personal information.</p>
+            </div>
+        </div>
 
-            <h5 class="fw-bold mb-3" style="color: var(--primary-base);">Actions</h5>
+        <p class="text-muted mb-4">
+            Your account contains personal data that you have given us. You can download a copy of this data or permanently delete your account.
+        </p>
 
-            <form id="download-data" asp-page="DownloadPersonalData" method="post" class="mb-3">
-                <button class="btn btn-primary btn-pill-action px-4" type="submit">
-                    <i class="bi bi-cloud-download me-1"></i> Download Data
+        <div class="d-grid gap-2 mb-4">
+            <form id="download-data" asp-page="DownloadPersonalData" method="post" class="w-100">
+                <button class="btn btn-primary btn-pill-action w-100 shadow-sm fw-bold" type="submit">
+                    <i class="bi bi-cloud-download-fill me-2"></i>Download My Data
                 </button>
             </form>
+        </div>
 
-            <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger btn-pill-action px-4">
-                <i class="bi bi-trash me-1"></i> Delete Account
+        <hr class="my-4" style="opacity: 0.1;">
+
+        <div class="p-3 rounded-3 border border-danger border-opacity-25" style="background-color: var(--danger-soft);">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-exclamation-triangle-fill fs-4 me-3" style="color: var(--danger-text);"></i>
+                <h6 class="fw-bold mb-0 text-danger">Danger Zone</h6>
+            </div>
+            <p class="small text-muted mb-3">
+                Permanently remove your account and all associated data. This action cannot be undone.
+            </p>
+            <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger btn-pill-action w-100 shadow-sm fw-bold">
+                <i class="bi bi-trash-fill me-2"></i>Delete Account
             </a>
         </div>
+
     </div>
 </div>
 

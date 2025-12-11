@@ -1,8 +1,31 @@
 ﻿@page
 @model ConfirmEmailChangeModel
 @{
-    ViewData["Title"] = "Confirm email change";
+    ViewData["Title"] = "Confirm Email Change";
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card card-clean shadow-sm border">
+            <div class="card-body p-5 text-center">
+
+                <div class="mb-4">
+                    <div class="icon-circle lg theme-primary mx-auto shadow-sm">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+                </div>
+
+                <h2 class="fw-bold mb-3" style="color: var(--text-main);">@ViewData["Title"]</h2>
+
+                <div class="mb-4 text-start">
+                    <partial name="_StatusMessage" model="Model.StatusMessage" />
+                </div>
+
+                <a href="/" class="btn btn-light border btn-pill-action px-4">
+                    Return Home
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>

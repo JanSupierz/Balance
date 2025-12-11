@@ -1,41 +1,52 @@
 ﻿@page
 @model ShowRecoveryCodesModel
 @{
-    ViewData["Title"] = "Recovery codes";
-    ViewData["ActivePage"] = "TwoFactorAuthentication";
+    ViewData["Title"] = "Your Recovery Codes";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
-<h4 class="fw-bold mb-4" style="color: var(--primary-base);">@ViewData["Title"]</h4>
+<div class="card card-clean shadow-sm border">
+    <div class="card-body p-4 p-md-5">
 
-<div class="card card-clean p-4 shadow-sm border">
+        <div class="d-flex align-items-center mb-4">
+            <div class="icon-circle md theme-success me-3 shadow-sm">
+                <i class="bi bi-key-fill"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0" style="color: var(--text-main);">@ViewData["Title"]</h4>
+                <p class="text-muted small mb-0">Save these codes in a secure location.</p>
+            </div>
+        </div>
 
-    <div class="alert border-0 p-3 mb-4" role="alert" style="background-color: var(--warning-soft);">
-        <p class="mb-2 fw-bold" style="color: var(--warning-text);">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <strong>Put these codes in a safe place.</strong>
-        </p>
-        <p class="mb-0 small text-muted">
-            If you lose your device and don't have the recovery codes you will lose access to your account.
-        </p>
-    </div>
+        <partial name="_StatusMessage" for="StatusMessage" />
 
-    <p class="text-muted mb-3">Here are the new recovery codes you should save:</p>
+        <div class="alert alert-warning border-0 rounded-3 mb-4" role="alert" style="background-color: var(--warning-soft); color: var(--warning-text);">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            <strong>Important:</strong> If you lose your device, these codes are the only way to recover your account.
+        </div>
 
-    <div class="row bg-light rounded-3 p-3 mx-0 border" style="background-color: var(--bg-app) !important; border-color: var(--border-color);">
-        @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
-        {
-            <div class="col-md-6 small fw-bold mb-1" style="color: var(--text-main);">
-                <code style="background: none; border: none; padding: 0;">@Model.RecoveryCodes[row]</code>
-                @if (row + 1 < Model.RecoveryCodes.Length)
+        <div class="bg-light rounded-3 p-4 border text-center" style="background-color: var(--bg-app) !important; border-color: var(--border-color) !important;">
+            <div class="row g-3 justify-content-center">
+                @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
                 {
-                    <text>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
-                    <code style="background: none; border: none; padding: 0;">@Model.RecoveryCodes[row + 1]</code>
+                    <div class="col-md-5">
+                        <code class="fs-5 fw-bold d-block py-2 bg-white rounded border shadow-sm" style="color: var(--text-main);">@Model.RecoveryCodes[row]</code>
+                    </div>
+                    @if (row + 1 < Model.RecoveryCodes.Length)
+                    {
+                        <div class="col-md-5">
+                            <code class="fs-5 fw-bold d-block py-2 bg-white rounded border shadow-sm" style="color: var(--text-main);">@Model.RecoveryCodes[row + 1]</code>
+                        </div>
+                    }
                 }
             </div>
-        }
+        </div>
+
+        <div class="text-center mt-4">
+            <button onclick="window.print()" class="btn btn-light border btn-pill-action">
+                <i class="bi bi-printer me-2"></i>Print Codes
+            </button>
+        </div>
+
     </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

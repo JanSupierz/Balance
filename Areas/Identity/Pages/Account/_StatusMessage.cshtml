@@ -2,9 +2,22 @@
 
 @if (!String.IsNullOrEmpty(Model))
 {
-    var statusMessageClass = Model.StartsWith("Error") ? "danger" : "success";
-    <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
+    var isError = Model.StartsWith("Error");
+    var bgColor = isError ? "var(--danger-soft)" : "var(--success-soft)";
+    var textColor = isError ? "var(--danger-text)" : "var(--success-text)";
+    var icon = isError ? "bi-exclamation-triangle-fill" : "bi-check-circle-fill";
+
+    <div class="alert border-0 shadow-sm rounded-3 d-flex align-items-center mb-3 fade show" role="alert"
+         style="background-color: @bgColor; color: @textColor;">
+
+        <div class="me-3">
+            <i class="bi @icon fs-4"></i>
+        </div>
+
+        <div class="flex-grow-1 fw-medium">
+            @Model
+        </div>
+
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        @Model
     </div>
 }

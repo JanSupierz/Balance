@@ -1,24 +1,31 @@
 ﻿@page
 @model DownloadPersonalDataModel
 @{
-    ViewData["Title"] = "Download Your Data";
+    ViewData["Title"] = "Download Data";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h4 class="fw-bold mb-4" style="color: var(--primary-base);">@ViewData["Title"]</h4>
+<div class="card card-clean shadow-sm border">
+    <div class="card-body p-4 p-md-5 text-center">
 
-<div class="card card-clean p-4 shadow-sm border">
+        <div class="mb-4">
+            <div class="icon-circle lg theme-primary mx-auto shadow-sm">
+                <i class="bi bi-cloud-download-fill"></i>
+            </div>
+        </div>
 
-    <p class="text-muted mb-4">
-        This feature allows you to download your personal data stored by our service.
-    </p>
+        <h2 class="fw-bold mb-3" style="color: var(--text-main);">@ViewData["Title"]</h2>
 
-    <div>
+        <p class="text-muted mb-4">
+            You can download a copy of your personal data stored by our service in JSON format.
+        </p>
+
         <form method="post">
-            <button class="btn btn-primary btn-pill-action px-5" type="submit">
-                <i class="bi bi-cloud-download me-1"></i> Download Data
+            <button class="btn btn-primary btn-pill-action px-5 py-2 shadow-sm fw-bold" type="submit">
+                <i class="bi bi-file-earmark-arrow-down me-2"></i>Download JSON
             </button>
         </form>
+
     </div>
 </div>
 
