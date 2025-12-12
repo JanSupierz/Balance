@@ -5,14 +5,12 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
-    // 1. Fetch User Data
     ApplicationUser? currentUser = null;
     if (SignInManager.IsSignedIn(User))
     {
         currentUser = await UserManager.GetUserAsync(User);
     }
 
-    // 2. Determine Current Location for Active Tabs
     var currentArea = ViewContext.RouteData.Values["area"]?.ToString();
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
@@ -24,36 +22,114 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Balance</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Balance.styles.css" asp-append-version="true" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
 
+    <style>
+        .theme-color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+    </style>
+
     <script>
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem('balance-theme');
             if (savedTheme && savedTheme !== 'default') {
                 document.documentElement.setAttribute('data-theme', savedTheme);
             }
         })();
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('balance-theme', theme);
+        }
     </script>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
     <header>
-        <nav class="navbar navbar-expand-sm navbar-theme shadow-sm fixed-top">
+        <nav class="navbar navbar-expand-md navbar-theme shadow-sm fixed-top">
             <div class="container-fluid">
+
+                <!-- Brand -->
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
                     <i class="bi bi-activity"></i> Balance
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
 
-                <div class="navbar-collapse collapse d-sm-flex justify-content-between">
+                <!-- ALWAYS VISIBLE RIGHT-SIDE CONTROLS (except login on mobile) -->
+                <div class="d-flex align-items-center order-md-3 ms-auto">
 
-                    <ul class="navbar-nav flex-grow-1">
+                    @* Always show points *@
+                    @if (SignInManager.IsSignedIn(User) && currentUser != null && User.IsInRole("User"))
+                    {
+                        bool isShopPage = currentController == "Prizes" && currentAction == "Index";
+                        if (!isShopPage)
+                        {
+                            <a class="btn btn-light fw-bold shadow-sm rounded-pill px-3 me-2"
+                               asp-area="User" asp-controller="Prizes" asp-action="Index"
+                               title="Go to Rewards Shop"
+                               style="display:flex; align-items:center; gap:.4rem;">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <span id="nav-points-display">@currentUser.CurrentPoints</span>
+                            </a>
+                        }
+                    }
+
+                    @* Always show theme selector *@
+                    <div class="dropdown me-2">
+                        <button class="btn btn-light rounded-circle shadow-sm" type="button"
+                                data-bs-toggle="dropdown" title="Change Theme">
+                            <i class="bi bi-palette-fill" style="color: var(--primary-base);"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                            <li><h6 class="dropdown-header">Select Theme</h6></li>
+                            <li>
+                                <button class="dropdown-item d-flex align-items-center gap-2"
+                                        onclick="setTheme('default')">
+                                    <span class="theme-color-indicator" style="background:#2563eb;"></span>
+                                    Blue (Default)
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item d-flex align-items-center gap-2"
+                                        onclick="setTheme('dark')">
+                                    <span class="theme-color-indicator" style="background:#0f172a; border-color:#334155;"></span>
+                                    Dark Mode
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item d-flex align-items-center gap-2"
+                                        onclick="setTheme('pink')">
+                                    <span class="theme-color-indicator" style="background:#db2777;"></span>
+                                    Pink
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    @* Desktop login stays visible here *@
+                    <div class="d-none d-md-block">
+                        <partial name="_LoginPartial" />
+                    </div>
+
+                    <!-- Hamburger -->
+                    <button class="navbar-toggler ms-2" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#mainNav"
+                            aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+
+                <!-- COLLAPSIBLE NAVIGATION -->
+                <div class="collapse navbar-collapse order-md-2" id="mainNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+
                         @if (SignInManager.IsSignedIn(User))
                         {
                             @if (User.IsInRole("User"))
@@ -78,80 +154,45 @@
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle @(currentArea == "Admin" ? "active fw-bold" : "")"
                                        href="#" role="button" data-bs-toggle="dropdown">
-                                        Admin
+                                        <i class="bi bi-shield-check"></i> Admin
                                     </a>
                                     <ul class="dropdown-menu border-0 shadow">
-                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Users</a></li>
-                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="PredefinedTasks" asp-action="Index">Templates</a></li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                                                <i class="bi bi-people"></i> Users
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="PredefinedTasks" asp-action="Index">
+                                                <i class="bi bi-file-earmark-text"></i> Templates
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                             }
                         }
                     </ul>
 
-                    <ul class="navbar-nav align-items-center">
-                        <li class="nav-item dropdown me-2">
-                            <button class="btn btn-light btn-sm rounded-circle shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Change Theme">
-                                <i class="bi bi-palette-fill" style="color: var(--primary-base);"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow" style="min-width: 200px; border-radius: 12px;">
-                                <li><h6 class="dropdown-header">Select Theme</h6></li>
-                                <li>
-                                    <button class="dropdown-item d-flex align-items-center gap-2 py-2" onclick="setTheme('default')">
-                                        <span class="d-inline-block rounded-circle" style="width:16px; height:16px; background:#2563eb;"></span>
-                                        <span>Blue (Default)</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="dropdown-item d-flex align-items-center gap-2 py-2" onclick="setTheme('dark')">
-                                        <span class="d-inline-block rounded-circle" style="width:16px; height:16px; background:#0f172a; border: 1px solid #334155;"></span>
-                                        <span>Dark Mode</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="dropdown-item d-flex align-items-center gap-2 py-2" onclick="setTheme('pink')">
-                                        <span class="d-inline-block rounded-circle" style="width:16px; height:16px; background:#db2777;"></span>
-                                        <span>Pink</span>
-                                    </button>
-                                </li>
-                            </ul>
-                        </li>
-
-                        @if (currentUser != null && User.IsInRole("User"))
-                        {
-                            bool isShopPage = currentController == "Prizes" && currentAction == "Index";
-
-                            if (!isShopPage)
-                            {
-                                <li class="nav-item me-2">
-                                    <a class="btn btn-sm btn-light fw-bold shadow-sm rounded-pill px-3"
-                                       asp-area="User" asp-controller="Prizes" asp-action="Index"
-                                       title="Go to Rewards Shop"
-                                       id="nav-points-display-container">
-
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <span id="nav-points-display">@currentUser.CurrentPoints</span>
-                                    </a>
-                                </li>
-                            }
-                        }
-
+                    @* MOBILE login appears last inside collapse *@
+                    <div class="d-md-none border-top pt-3 mt-3">
                         <partial name="_LoginPartial" />
-                    </ul>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <main role="main" class="flex-fill site-main" style="padding-top: 80px; padding-bottom: 70px;">
-        <div class="container mt-3">
+
+    <main role="main" class="flex-fill site-main" style="padding-top: 76px; padding-bottom: 70px;">
+        <div class="container mt-2 mt-md-3 px-3 px-md-0">
             @RenderBody()
         </div>
     </main>
 
     <footer class="footer-theme py-3 mt-auto">
         <div class="container text-center small">
-            &copy; 2025 - Balance - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Balance -
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
 
@@ -159,5 +200,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

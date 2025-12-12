@@ -15,13 +15,12 @@ namespace Balance.Areas.Admin.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        // 1. Add SignInManager
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public DashboardController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            SignInManager<ApplicationUser> signInManager) // 2. Inject it
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -90,6 +89,21 @@ namespace Balance.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeRole(string userId, Role role, bool addRole)
         {
+            // -----------------------------------------------------------
+            // 1. SECURITY: Just-In-Time Verification
+            // Check the DB immediately to ensure the person clicking the button is still an Admin.
+            // -----------------------------------------------------------
+            var currentAdminId = _userManager.GetUserId(User);
+            var currentAdminUser = await _userManager.FindByIdAsync(currentAdminId);
+
+            if (currentAdminUser == null || !await _userManager.IsInRoleAsync(currentAdminUser, "Admin"))
+            {
+                // Force logout if they lost admin access in the background
+                await _signInManager.SignOutAsync();
+                return RedirectToAction("Login", "Account", new { area = "" });
+            }
+            // -----------------------------------------------------------
+
             if (string.IsNullOrWhiteSpace(userId)) return BadRequest();
 
             var user = await _userManager.FindByIdAsync(userId);
@@ -100,8 +114,8 @@ namespace Balance.Areas.Admin.Controllers
             }
 
             // Security Check: Prevent removing own Admin role
-            var currentUserId = _userManager.GetUserId(User);
-            if (userId == currentUserId && role == Role.Admin && !addRole)
+            // We use currentAdminId which we fetched above
+            if (userId == currentAdminId && role == Role.Admin && !addRole)
             {
                 TempData["ErrorMessage"] = "Security Alert: You cannot remove your own Administrator role.";
                 return RedirectToAction("Index");
@@ -135,9 +149,12 @@ namespace Balance.Areas.Admin.Controllers
 
             if (result.Succeeded)
             {
-                // 3. REFRESH COOKIE LOGIC
-                // If the modified user is the currently logged-in user, refresh their cookie immediately
-                if (userId == currentUserId)
+                // 2. Refresh the TARGET user's security stamp.
+                // This ensures their cookie becomes invalid in the DB, so the system picks up the change eventually.
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                // 3. If modifying self (adding a role), refresh cookie immediately so UI updates
+                if (userId == currentAdminId)
                 {
                     await _signInManager.RefreshSignInAsync(user);
                 }
@@ -156,6 +173,19 @@ namespace Balance.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string userId)
         {
+            // -----------------------------------------------------------
+            // 1. SECURITY: Just-In-Time Verification
+            // -----------------------------------------------------------
+            var currentAdminId = _userManager.GetUserId(User);
+            var currentAdminUser = await _userManager.FindByIdAsync(currentAdminId);
+
+            if (currentAdminUser == null || !await _userManager.IsInRoleAsync(currentAdminUser, "Admin"))
+            {
+                await _signInManager.SignOutAsync();
+                return RedirectToAction("Login", "Account", new { area = "" });
+            }
+            // -----------------------------------------------------------
+
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {

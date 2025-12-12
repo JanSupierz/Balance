@@ -110,12 +110,11 @@
                                 <div class="d-flex flex-wrap align-items-center gap-2">
                                     @foreach (var role in item.Roles)
                                     {
-                                        // FIXED: Use 'theme-secondary' instead of 'theme-dark' for Users
                                         var badgeClass = role == Role.Admin ? "theme-primary" : "theme-secondary";
                                         var icon = role == Role.Admin ? "bi-shield-fill" : "bi-person-fill";
                                         var canRemove = !(isCurrentUser && role == Role.Admin);
 
-                                        <div class="badge rounded-pill border fw-normal d-inline-flex align-items-center px-3 py-2 @badgeClass" style="border-color: transparent;">
+                                        <div class="badge table-action @badgeClass">
                                             <i class="bi @icon me-1"></i> @role
                                             @if (canRemove)
                                             {
@@ -124,7 +123,7 @@
                                                     <input type="hidden" name="userId" value="@item.User.Id" />
                                                     <input type="hidden" name="role" value="@role" />
                                                     <input type="hidden" name="addRole" value="false" />
-                                                    <button type="submit" class="btn p-0 border-0 text-inherit opacity-50" title="Remove role" style="color:inherit;">
+                                                    <button type="submit" class="btn p-0 border-0 text-inherit opacity-50 table-action" title="Remove role">
                                                         <i class="bi bi-x-circle-fill"></i>
                                                     </button>
                                                 </form>
@@ -135,7 +134,7 @@
                                     @if (availableRoles.Any())
                                     {
                                         <div class="dropdown">
-                                            <button class="btn btn-sm btn-light rounded-circle border" style="width: 28px; height: 28px; padding: 0;" data-bs-toggle="dropdown">
+                                            <button class="btn btn-sm btn-light rounded-circle border table-action" style="width: 32px; height: 32px; padding: 0;" data-bs-toggle="dropdown">
                                                 <i class="bi bi-plus-lg"></i>
                                             </button>
                                             <ul class="dropdown-menu border-0 shadow-sm rounded-3">
@@ -162,7 +161,7 @@
                             <td class="text-end pe-4">
                                 @if (!isCurrentUser)
                                 {
-                                    <button type="button" class="btn btn-sm btn-soft-danger js-delete-trigger rounded-pill px-3"
+                                    <button type="button" class="btn btn-soft-danger table-action js-delete-trigger"
                                             data-id="@item.User.Id"
                                             data-title="@item.User.UserName">
                                         <i class="bi bi-trash me-1"></i> Delete
@@ -170,7 +169,9 @@
                                 }
                                 else
                                 {
-                                    <span class="badge bg-light text-muted border">You</span>
+                                    <span class="badge bg-light text-muted table-action">
+                                        You
+                                    </span>
                                 }
                             </td>
                         </tr>
