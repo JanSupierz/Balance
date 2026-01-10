@@ -5,9 +5,7 @@
 @inject UserManager<ApplicationUser> UserManager
 
 @{
-    // Get current page info
     var currentAction = ViewContext.RouteData.Values["page"]?.ToString();
-    // For Identity pages, use ViewContext.RouteData.Values["page"] instead of "action"
 }
 
 <ul class="navbar-nav">

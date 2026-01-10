@@ -257,6 +257,34 @@ html, body {
     color: var(--text-main);
 }
 
+.validation-summary-errors {
+    display: block; /* make it a block element */
+    margin: 1rem auto 1.5rem auto; /* vertical spacing + horizontal centering */
+    padding: 1rem 1.25rem; /* comfortable padding */
+    max-width: 100%; /* prevent overflow */
+    background-color: var(--danger-soft); /* soft error background */
+    border: 1px solid var(--danger-text); /* strong border for emphasis */
+    border-radius: 12px; /* rounded corners to match card theme */
+    color: var(--danger-text); /* error text color */
+    text-align: center; /* center the text */
+    font-size: 0.95rem;
+    line-height: 1.4;
+    box-shadow: var(--shadow-sm);
+}
+
+    /* Remove default list padding and margin */
+    .validation-summary-errors ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    /* Small spacing for multiple errors */
+    .validation-summary-errors li {
+        margin: 0.25rem 0;
+    }
+
+
 /* =========================================
    5. TABLES & HEADERS
    ========================================= */
@@ -737,4 +765,21 @@ html, body {
     height: 32px;
     padding: 0 12px; /* enough space for icon + text */
     font-size: 0.875rem;
+}
+
+/* Disabled buttons – authoritative visual state */
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Disabled PRIMARY button */
+.btn-primary:disabled,
+.btn-primary.disabled {
+    background-color: var(--border-color) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-muted) !important;
+    box-shadow: none !important;
 }

@@ -133,25 +133,37 @@
                             }
                             else if (prize.Cost <= 500)
                             {
-
                                 <i class="bi bi-film"></i>
                             }
                             else
                             {
-
                                 <i class="bi bi-airplane-fill"></i>
                             }
                         </div>
 
-                        <button class="btn btn-sm btn-light border-0 rounded-circle text-muted js-delete-trigger"
-                                type="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deletePrizeModal"
-                                data-id="@prize.Id"
-                                data-title="@prize.Title"
-                                style="width: 36px; height: 36px;">
-                            <i class="bi bi-trash3-fill"></i>
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-light border-0 rounded-circle text-muted js-edit-trigger"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editPrizeModal"
+                                    data-id="@prize.Id"
+                                    data-title="@prize.Title"
+                                    data-cost="@prize.Cost"
+                                    data-description="@prize.Description"
+                                    style="width: 36px; height: 36px;">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-light border-0 rounded-circle text-muted js-delete-trigger"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deletePrizeModal"
+                                    data-id="@prize.Id"
+                                    data-title="@prize.Title"
+                                    style="width: 36px; height: 36px;">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <h5 class="fw-bold mb-2" style="color: var(--text-main); min-height: 3rem;">@prize.Title</h5>
@@ -214,6 +226,7 @@
     }
 </div>
 
+<!-- Create Modal -->
 <div class="modal fade modal-clean" id="createPrizeModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content overflow-hidden">
@@ -257,6 +270,53 @@
     </div>
 </div>
 
+<!-- Edit Modal -->
+<div class="modal fade modal-clean" id="editPrizeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden">
+            <div class="modal-header border-0 pb-0 pe-4 pt-4">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-5 pb-5 pt-0">
+                <div class="text-center mb-4">
+                    <div class="icon-circle theme-primary lg mx-auto mb-3 shadow-sm">
+                        <i class="bi bi-pencil-fill"></i>
+                    </div>
+                    <h4 class="fw-bold" style="color: var(--text-main)">Edit Reward</h4>
+                    <p class="text-muted">Modify your reward details.</p>
+                </div>
+
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" id="editPrizeId" name="Id" />
+
+                    <div class="form-floating mb-3">
+                        <input name="Title" type="text" class="form-control input-theme" id="editPrizeTitle" placeholder="Reward Title" required>
+                        <label for="editPrizeTitle">Reward Title</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input name="Cost" type="number" class="form-control input-theme" id="editPrizeCost" min="1" placeholder="Cost" required>
+                        <label for="editPrizeCost">Cost (Points)</label>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <textarea name="Description" class="form-control input-theme" id="editPrizeDesc" placeholder="Description" style="height: 100px"></textarea>
+                        <label for="editPrizeDesc">Description (Optional)</label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-md fw-bold">
+                            Save Changes
+                        </button>
+                        <button type="button" class="btn btn-light rounded-pill py-2 text-muted" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
 <div class="modal fade modal-clean" id="deletePrizeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content overflow-hidden">
@@ -296,29 +356,36 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
-            // 1. DELETE MODAL DATA PASSING (Fixed)
-            // We listen for the modal opening event instead of clicking the button.
-            // This prevents double-triggering the backdrop.
+            // DELETE modal
             const deleteModal = document.getElementById('deletePrizeModal');
             if (deleteModal) {
                 deleteModal.addEventListener('show.bs.modal', event => {
-                    // Button that triggered the modal
                     const button = event.relatedTarget;
-
-                    // Extract info from data-* attributes
                     const id = button.getAttribute('data-id');
                     const title = button.getAttribute('data-title');
-
-                    // Update the modal's content
-                    const titleSpan = deleteModal.querySelector('.js-delete-title');
-                    const idInput = deleteModal.querySelector('.js-delete-id');
-
-                    if (titleSpan) titleSpan.textContent = title;
-                    if (idInput) idInput.value = id;
+                    deleteModal.querySelector('.js-delete-title').textContent = title;
+                    deleteModal.querySelector('.js-delete-id').value = id;
                 });
             }
 
-            // 2. SIMPLE CARD ANIMATION (No changes needed here)
+            // EDIT modal
+            const editModal = document.getElementById('editPrizeModal');
+            if (editModal) {
+                editModal.addEventListener('show.bs.modal', event => {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+                    const title = button.getAttribute('data-title');
+                    const cost = button.getAttribute('data-cost');
+                    const description = button.getAttribute('data-description');
+
+                    editModal.querySelector('#editPrizeId').value = id;
+                    editModal.querySelector('#editPrizeTitle').value = title;
+                    editModal.querySelector('#editPrizeCost').value = cost;
+                    editModal.querySelector('#editPrizeDesc').value = description;
+                });
+            }
+
+            // Card animation
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -326,7 +393,6 @@
                         if (progressBar) {
                             const width = progressBar.style.width;
                             progressBar.style.width = '0';
-                            // Force reflow
                             void progressBar.offsetWidth;
                             progressBar.style.width = width;
                         }

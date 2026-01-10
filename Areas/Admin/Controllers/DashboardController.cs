@@ -114,7 +114,6 @@ namespace Balance.Areas.Admin.Controllers
             }
 
             // Security Check: Prevent removing own Admin role
-            // We use currentAdminId which we fetched above
             if (userId == currentAdminId && role == Role.Admin && !addRole)
             {
                 TempData["ErrorMessage"] = "Security Alert: You cannot remove your own Administrator role.";

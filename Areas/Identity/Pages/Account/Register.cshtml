@@ -13,32 +13,99 @@
                     <div class="icon-circle lg theme-primary mx-auto mb-3 shadow-sm">
                         <i class="bi bi-person-plus-fill"></i>
                     </div>
-                    <h2 class="fw-bold" style="color: var(--text-main);">@ViewData["Title"]</h2>
+                    <h2 class="fw-bold">@ViewData["Title"]</h2>
                     <p class="text-muted">Join us today.</p>
                 </div>
 
                 <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 shadow-sm rounded-3 mb-3" role="alert"></div>
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger border-0 shadow-sm rounded-3 mb-3"
+                         role="alert"></div>
 
+                    <!-- EMAIL -->
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <input asp-for="Input.Email"
+                               class="form-control"
+                               autocomplete="username"
+                               placeholder="name@example.com" />
                         <label asp-for="Input.Email">Email Address</label>
                         <span asp-validation-for="Input.Email" class="text-danger small"></span>
                     </div>
 
+                    <!-- PASSWORD -->
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                        <input asp-for="Input.Password"
+                               id="passwordInput"
+                               class="form-control"
+                               placeholder="password"
+                               aria-describedby="passwordRules"
+                               data-min-length="@Model.PasswordOptions.RequiredLength"
+                               data-require-upper="@Model.PasswordOptions.RequireUppercase.ToString().ToLower()"
+                               data-require-lower="@Model.PasswordOptions.RequireLowercase.ToString().ToLower()"
+                               data-require-digit="@Model.PasswordOptions.RequireDigit.ToString().ToLower()"
+                               data-require-symbol="@Model.PasswordOptions.RequireNonAlphanumeric.ToString().ToLower()"
+                               data-unique-chars="@Model.PasswordOptions.RequiredUniqueChars" />
+
+
+
                         <label asp-for="Input.Password">Password</label>
                         <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        <ul id="passwordRules" class="small mt-2 list-unstyled d-none" aria-live="polite">
+                            <li data-rule="length">Minimum length: @Model.PasswordOptions.RequiredLength</li>
+                            @if (Model.PasswordOptions.RequireUppercase)
+                            {
+                                <li data-rule="uppercase">At least one uppercase letter</li>
+                            }
+                            @if (Model.PasswordOptions.RequireLowercase)
+                            {
+                                <li data-rule="lowercase">At least one lowercase letter</li>
+                            }
+                            @if (Model.PasswordOptions.RequireDigit)
+                            {
+                                <li data-rule="digit">At least one number</li>
+                            }
+                            @if (Model.PasswordOptions.RequireNonAlphanumeric)
+                            {
+                                <li data-rule="symbol">At least one special character</li>
+                            }
+                            @if (Model.PasswordOptions.RequiredUniqueChars > 1)
+                            {
+                                <li data-rule="unique">At least @Model.PasswordOptions.RequiredUniqueChars unique characters</li>
+                            }
+                        </ul>
+
+                        <div class="mt-2">
+                            <div class="progress mb-1" style="height: 4px;">
+                                <div id="passwordProgress"
+                                     class="progress-bar"
+                                     role="progressbar"
+                                     style="width: 0%"></div>
+                            </div>
+
+                            <div id="passwordStatus"
+                                 class="small text-muted"
+                                 aria-live="polite">
+                                Enter a password to see requirements
+                            </div>
+                        </div>
+
                     </div>
 
+                    <!-- CONFIRM PASSWORD -->
                     <div class="form-floating mb-4">
-                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                        <input asp-for="Input.ConfirmPassword"
+                               id="confirmPasswordInput"
+                               class="form-control"
+                               placeholder="password" />
                         <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                         <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
                     </div>
 
-                    <button id="registerSubmit" type="submit" class="w-100 btn btn-primary btn-lg btn-pill-action shadow-sm fw-bold">
+                    <!-- SUBMIT -->
+                    <button id="registerSubmit"
+                            type="submit"
+                            class="w-100 btn btn-primary btn-lg btn-pill-action fw-bold"
+                            disabled>
                         Register
                     </button>
                 </form>
@@ -46,15 +113,23 @@
                 @if ((Model.ExternalLogins?.Count ?? 0) > 0)
                 {
                     <div class="position-relative my-4">
-                        <hr class="text-muted opacity-25">
-                        <span class="position-absolute top-50 start-50 translate-middle px-3 small text-muted fw-bold" style="background-color: var(--bg-surface);">OR</span>
+                        <hr class="opacity-25">
+                        <span class="position-absolute top-50 start-50 translate-middle px-3 small text-muted fw-bold bg-white">
+                            OR
+                        </span>
                     </div>
 
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="text-center">
+                    <form asp-page="./ExternalLogin"
+                          asp-route-returnUrl="@Model.ReturnUrl"
+                          method="post"
+                          class="text-center">
                         <div class="d-grid gap-2">
                             @foreach (var provider in Model.ExternalLogins!)
                             {
-                                <button type="submit" class="btn btn-light border btn-pill-action" name="provider" value="@provider.Name">
+                                <button type="submit"
+                                        class="btn btn-light border"
+                                        name="provider"
+                                        value="@provider.Name">
                                     Continue with @provider.DisplayName
                                 </button>
                             }
@@ -64,7 +139,10 @@
 
                 <div class="text-center mt-4">
                     <p class="text-muted small">
-                        Already have an account? <a asp-page="./Login" class="text-decoration-none fw-bold" style="color: var(--primary-base);">Log in</a>
+                        Already have an account?
+                        <a asp-page="./Login" class="fw-bold text-decoration-none">
+                            Log in
+                        </a>
                     </p>
                 </div>
 
@@ -72,6 +150,8 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/register-password.js"></script>
 }

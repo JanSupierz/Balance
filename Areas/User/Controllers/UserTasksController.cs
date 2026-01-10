@@ -14,8 +14,6 @@ namespace Balance.Areas.User.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
-        // ApplicationDbContext is injected to allow specific complex queries if needed,
-        // specifically for fetching tasks with tags via UnitOfWork if the generic repo isn't sufficient.
         private readonly ApplicationDbContext _context;
 
         public UserTasksController(UnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, ApplicationDbContext context)

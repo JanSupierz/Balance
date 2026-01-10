@@ -15,23 +15,19 @@ namespace Balance.Repositories
             _dbSet = context.Set<T>();
         }
 
-        // --- THE BIG CHANGE IS HERE ---
-        // We combined your two methods into one flexible method.
-        // It now accepts an optional filter AND an optional list of properties to include (e.g., "Tags").
         public async Task<IEnumerable<T>> GetAllAsync(
             Expression<Func<T, bool>>? filter = null,
             string? includeProperties = null)
         {
             IQueryable<T> query = _dbSet;
 
-            // 1. Apply Filter (if provided)
+            // 1. Apply Filter
             if (filter != null)
             {
                 query = query.Where(filter);
             }
 
-            // 2. Apply Includes (if provided)
-            // This allows you to say "Give me Tasks AND their Tags"
+            // 2. Apply Includes
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))

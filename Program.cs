@@ -14,7 +14,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // --- 2. Identity & Roles ---
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    // Adjust password settings here if needed for development
     options.Password.RequireDigit = true;
     options.SignIn.RequireConfirmedAccount = true;
 })
@@ -22,7 +21,6 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // --- 3. Data Access Services ---
-// We only register UnitOfWork. It internally manages the specific Repositories.
 builder.Services.AddScoped<UnitOfWork>();
 
 // --- 4. MVC & UI ---
@@ -46,8 +44,6 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-
-        // This single line handles Migration + Seeding Users + Seeding Tasks
         await DbInitializer.InitializeAsync(services, context);
     }
     catch (Exception ex)

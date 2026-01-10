@@ -71,7 +71,6 @@
                         </div>
                     </div>
 
-                    <!-- UPDATED: calendar icon now inert, only input clickable, no highlight -->
                     <div class="mb-4 @(Model.Frequency == Frequency.OneTime ? "" : "d-none")" id="deadlineInputContainer">
                         <label class="form-label fw-bold">Due Date</label>
                         <div class="input-group">
@@ -124,9 +123,7 @@
         select.addEventListener('change', toggleDate);
         toggleDate();
 
-        // UPDATED: prevent highlight + open only on input click
         const dateInput = document.getElementById('deadlineDate');
-
         dateInput.style.userSelect = 'none';
         dateInput.addEventListener('mousedown', e => e.preventDefault());
 

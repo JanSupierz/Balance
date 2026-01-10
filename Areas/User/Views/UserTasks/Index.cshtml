@@ -18,72 +18,70 @@
 
 <input type="hidden" id="antiforgeryToken" value="@antiforgeryToken" />
 
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0 fw-bold"><i class="bi bi-check2-circle me-2" style="color: var(--primary-base);"></i>My Tasks</h2>
-        <div>
-            <button class="btn btn-light border shadow-sm me-2 btn-pill-action" data-bs-toggle="modal" data-bs-target="#templatesModal">
-                <i class="bi bi-collection"></i> <span class="d-none d-md-inline">Templates</span>
-            </button>
-            <a asp-action="Create" class="btn btn-primary shadow-sm btn-pill-action">
-                <i class="bi bi-plus-lg"></i> New
-            </a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 fw-bold"><i class="bi bi-check2-circle me-2" style="color: var(--primary-base);"></i>My Tasks</h2>
+    <div>
+        <button class="btn btn-light border shadow-sm me-2 btn-pill-action" data-bs-toggle="modal" data-bs-target="#templatesModal">
+            <i class="bi bi-collection"></i> <span class="d-none d-md-inline">Templates</span>
+        </button>
+        <a asp-action="Create" class="btn btn-primary shadow-sm btn-pill-action">
+            <i class="bi bi-plus-lg"></i> New
+        </a>
+    </div>
+</div>
+
+<div class="card card-clean mb-4 p-3 shadow-sm border">
+    <form method="get" class="row g-3 align-items-center">
+        <div class="col-12 col-sm-auto">
+            <div class="input-group">
+                <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                    <i class="bi bi-sort-down"></i>
+                </span>
+                <select name="sortOrder" id="sortOrderSelect" class="form-select border-start-0 ps-0 focus-ring-none" onchange="this.form.submit()">
+                    <option value="smart" selected="@(currentSort == "smart" ? "selected" : null)">Smart Priority</option>
+                    <option value="title" selected="@(currentSort == "title" ? "selected" : null)">Title (A-Z)</option>
+                </select>
+            </div>
         </div>
-    </div>
 
-    <div class="card card-clean mb-4 p-3 shadow-sm border">
-        <form method="get" class="row g-3 align-items-center">
-            <div class="col-12 col-sm-auto">
-                <div class="input-group">
-                    <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-                        <i class="bi bi-sort-down"></i>
-                    </span>
-                    <select name="sortOrder" id="sortOrderSelect" class="form-select border-start-0 ps-0 focus-ring-none" onchange="this.form.submit()">
-                        <option value="smart" selected="@(currentSort == "smart" ? "selected" : null)">Smart Priority</option>
-                        <option value="title" selected="@(currentSort == "title" ? "selected" : null)">Title (A-Z)</option>
-                    </select>
-                </div>
+        <div class="col-12 col-sm-auto">
+            <div class="input-group">
+                <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                    <i class="bi bi-tags"></i>
+                </span>
+                <select name="filterTagId" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
+                    <option value="">All Tags</option>
+                    @foreach (var tag in allTags)
+                    {
+                        <option value="@tag.Id" selected="@(currentTag == tag.Id ? "selected" : null)">@tag.Name</option>
+                    }
+                </select>
             </div>
+        </div>
 
-            <div class="col-12 col-sm-auto">
-                <div class="input-group">
-                    <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-                        <i class="bi bi-tags"></i>
-                    </span>
-                    <select name="filterTagId" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
-                        <option value="">All Tags</option>
-                        @foreach (var tag in allTags)
-                        {
-                            <option value="@tag.Id" selected="@(currentTag == tag.Id ? "selected" : null)">@tag.Name</option>
-                        }
-                    </select>
-                </div>
+        <div class="col-12 col-sm-auto">
+            <div class="input-group">
+                <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                    <i class="bi bi-calendar3"></i>
+                </span>
+                <select name="filterFrequency" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
+                    <option value="">All Types</option>
+                    <option value="@Frequency.OneTime" selected="@(currentFreq == Frequency.OneTime ? "selected" : null)">One Time</option>
+                    <option value="@Frequency.Daily" selected="@(currentFreq == Frequency.Daily ? "selected" : null)">Daily</option>
+                    <option value="@Frequency.Weekly" selected="@(currentFreq == Frequency.Weekly ? "selected" : null)">Weekly</option>
+                </select>
             </div>
+        </div>
 
-            <div class="col-12 col-sm-auto">
-                <div class="input-group">
-                    <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-                        <i class="bi bi-calendar3"></i>
-                    </span>
-                    <select name="filterFrequency" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
-                        <option value="">All Types</option>
-                        <option value="@Frequency.OneTime" selected="@(currentFreq == Frequency.OneTime ? "selected" : null)">One Time</option>
-                        <option value="@Frequency.Daily" selected="@(currentFreq == Frequency.Daily ? "selected" : null)">Daily</option>
-                        <option value="@Frequency.Weekly" selected="@(currentFreq == Frequency.Weekly ? "selected" : null)">Weekly</option>
-                    </select>
-                </div>
+        @if (currentSort != "smart" || currentTag.HasValue || currentFreq.HasValue)
+        {
+            <div class="col-12 col-sm-auto ms-sm-auto text-end">
+                <a asp-action="Index" class="btn btn-link text-muted text-decoration-none small px-0">
+                    <i class="bi bi-x-circle me-1"></i>Clear Filters
+                </a>
             </div>
-
-            @if (currentSort != "smart" || currentTag.HasValue || currentFreq.HasValue)
-            {
-                <div class="col-12 col-sm-auto ms-sm-auto text-end">
-                    <a asp-action="Index" class="btn btn-link text-muted text-decoration-none small px-0">
-                        <i class="bi bi-x-circle me-1"></i>Clear Filters
-                    </a>
-                </div>
-            }
-        </form>
-    </div>
+        }
+    </form>
 </div>
 
 <div class="mb-4">
@@ -412,7 +410,6 @@
                     const card = cardCol.querySelector('.card');
                     if(card) {
                         card.classList.remove('shadow-sm');
-                        // ADDED: Explicitly remove urgency borders so it reverts to gray
                         card.classList.remove('border-danger', 'border-warning', 'border-2');
                     }
 

@@ -20,7 +20,6 @@ namespace Balance.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             var tasks = await _unitOfWork.PredefinedTasks.GetAllAsync();
-            // Optional: Sort by Title
             return View(tasks.OrderBy(t => t.Title));
         }
 
