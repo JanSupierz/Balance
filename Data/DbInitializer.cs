@@ -9,13 +9,13 @@ namespace Balance.Data
     {
         public static async Task InitializeAsync(IServiceProvider serviceProvider, ApplicationDbContext context)
         {
-            // 1. Ensure Database is Created/Migrated
+            // Ensure Database is Created/Migrated
             await context.Database.MigrateAsync();
 
-            // 2. Seed Identity (Roles & Users)
+            // Seed Identity
             await SeedRolesAndUsersAsync(serviceProvider);
 
-            // 3. Seed App Data (Predefined Tasks)
+            // Seed App Data
             await SeedPredefinedTasksAsync(context);
         }
 

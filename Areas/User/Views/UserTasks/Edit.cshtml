@@ -9,7 +9,11 @@
 }
 
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
-<input type="hidden" id="antiforgeryToken" value="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+<input type="hidden"
+       id="task-edit-config"
+       data-create-tag-url="@Url.Action("CreateTag")"
+       data-delete-tag-url="@Url.Action("DeleteTag")"
+       data-antiforgery="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -52,7 +56,11 @@
                                         <div class="tag-wrapper" id="tag-wrapper-@tag.Id">
                                             <input class="form-check-input d-none tag-checkbox" type="checkbox" name="selectedTagIds" value="@tag.Id" id="tag_@tag.Id" data-color="@tag.Color" @(isChecked ? "checked" : "")>
                                             <label class="badge rounded-pill fw-normal tag-label badge-tag d-flex align-items-center gap-2" for="tag_@tag.Id">@tag.Name</label>
-                                            <button type="button" class="btn-delete-tag" onclick="deleteTag(@tag.Id)"><i class="bi bi-x"></i></button>
+                                            <button type="button"
+                                                    class="btn-delete-tag"
+                                                    data-id="@tag.Id">
+                                                <i class="bi bi-x"></i>
+                                            </button>
                                         </div>
                                     }
                                 </div>
@@ -109,114 +117,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        const token = document.getElementById('antiforgeryToken').value;
-        const select = document.getElementById('frequencySelect');
-        const container = document.getElementById('deadlineInputContainer');
-
-        function toggleDate() {
-            const selectedText = select.options[select.selectedIndex].text;
-            if (selectedText === "OneTime") container.classList.remove('d-none');
-            else container.classList.add('d-none');
-        }
-        select.addEventListener('change', toggleDate);
-        toggleDate();
-
-        const dateInput = document.getElementById('deadlineDate');
-        dateInput.style.userSelect = 'none';
-        dateInput.addEventListener('mousedown', e => e.preventDefault());
-
-        dateInput.addEventListener('click', function () {
-            if (typeof dateInput.showPicker === 'function') {
-                dateInput.showPicker();
-            }
-        });
-
-        // Tag visuals
-        function updateTagVisuals(checkbox) {
-            const label = document.querySelector(`label[for="${checkbox.id}"]`);
-            if(!label) return;
-
-            const color = checkbox.dataset.color || '#4f46e5';
-
-            if (checkbox.checked) {
-                label.style.backgroundColor = color;
-                label.style.color = '#ffffff';
-                label.style.borderColor = color;
-            } else {
-                label.style.backgroundColor = 'var(--bg-surface)';
-                label.style.color = 'var(--text-main)';
-                label.style.borderColor = 'var(--border-color)';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.tag-checkbox').forEach(cb => {
-                updateTagVisuals(cb);
-                cb.addEventListener('change', () => updateTagVisuals(cb));
-            });
-        });
-
-        document.getElementById('btnCreateTag').addEventListener('click', async function() {
-            const inputName = document.getElementById('newTagName');
-            const inputColor = document.getElementById('newTagColor');
-            if (!inputName.value) return;
-
-            try {
-                const response = await fetch('@Url.Action("CreateTag")', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
-                    body: JSON.stringify({ name: inputName.value, color: inputColor.value })
-                });
-
-                if (response.ok) {
-                    const tag = await response.json();
-                    document.getElementById('noTagsMsg').classList.add('d-none');
-
-                    const list = document.getElementById('tagsList');
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'tag-wrapper';
-                    wrapper.id = `tag-wrapper-${tag.id}`;
-
-                    wrapper.innerHTML = `
-                        <input class="form-check-input d-none tag-checkbox" type="checkbox" name="selectedTagIds" value="${tag.id}" id="tag_${tag.id}" data-color="${tag.color}" checked>
-                        <label class="badge rounded-pill fw-normal tag-label badge-tag d-flex align-items-center gap-2" for="tag_${tag.id}">${tag.name}</label>
-                        <button type="button" class="btn-delete-tag" onclick="deleteTag(${tag.id})"><i class="bi bi-x"></i></button>
-                    `;
-                    list.appendChild(wrapper);
-
-                    const newCheckbox = wrapper.querySelector('input');
-                    updateTagVisuals(newCheckbox);
-                    newCheckbox.addEventListener('change', () => updateTagVisuals(newCheckbox));
-
-                    inputName.value = '';
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        });
-
-        async function deleteTag(id) {
-            if(!confirm("Delete this tag?")) return;
-
-            try {
-                const response = await fetch('@Url.Action("DeleteTag")', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
-                    body: JSON.stringify({ id: id })
-                });
-
-                if (response.ok) {
-                    const el = document.getElementById(`tag-wrapper-${id}`);
-                    if(el) el.remove();
-
-                    if(document.getElementById('tagsList').children.length === 0)
-                        document.getElementById('noTagsMsg').classList.remove('d-none');
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    </script>
+    <script src="~/js/task-edit.js" asp-append-version="true"></script>
 }

@@ -21,13 +21,13 @@ namespace Balance.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            // 1. Apply Filter
+            // Apply Filter
             if (filter != null)
             {
                 query = query.Where(filter);
             }
 
-            // 2. Apply Includes
+            // Apply Includes
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))

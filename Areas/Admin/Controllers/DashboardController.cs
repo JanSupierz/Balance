@@ -148,11 +148,11 @@ namespace Balance.Areas.Admin.Controllers
 
             if (result.Succeeded)
             {
-                // 2. Refresh the TARGET user's security stamp.
+                // Refresh the TARGET user's security stamp.
                 // This ensures their cookie becomes invalid in the DB, so the system picks up the change eventually.
                 await _userManager.UpdateSecurityStampAsync(user);
 
-                // 3. If modifying self (adding a role), refresh cookie immediately so UI updates
+                // If modifying self (adding a role), refresh cookie immediately so UI updates
                 if (userId == currentAdminId)
                 {
                     await _signInManager.RefreshSignInAsync(user);
@@ -173,7 +173,7 @@ namespace Balance.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteUser(string userId)
         {
             // -----------------------------------------------------------
-            // 1. SECURITY: Just-In-Time Verification
+            // SECURITY: Just-In-Time Verification
             // -----------------------------------------------------------
             var currentAdminId = _userManager.GetUserId(User);
             var currentAdminUser = await _userManager.FindByIdAsync(currentAdminId);
@@ -183,7 +183,6 @@ namespace Balance.Areas.Admin.Controllers
                 await _signInManager.SignOutAsync();
                 return RedirectToAction("Login", "Account", new { area = "" });
             }
-            // -----------------------------------------------------------
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)

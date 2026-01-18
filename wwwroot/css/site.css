@@ -1,8 +1,8 @@
 /* =========================================
-   1. THEME DEFINITIONS
+   THEME DEFINITIONS
    ========================================= */
 
-/* DEFAULT (TRUE BLUE) */
+/* DEFAULT */
 :root {
     /* Brand Colors */
     --primary-soft: #eff6ff;
@@ -63,7 +63,7 @@
 }
 
 /* =========================================
-   2. GLOBAL RESET & BASE
+   GLOBAL RESET & BASE
    ========================================= */
 html, body {
     margin: 0;
@@ -75,7 +75,7 @@ html, body {
 }
 
 /* =========================================
-   3. COMPONENT OVERRIDES
+   COMPONENT OVERRIDES
    ========================================= */
 .card, .card-hover, .card-clean, .card-reward {
     background-color: var(--bg-surface) !important;
@@ -180,15 +180,11 @@ html, body {
 }
 
 /* =========================================
-   4. THEMES & BADGES
+   THEMES & BADGES
    ========================================= */
 .bg-primary-theme {
     background-color: var(--primary-base) !important;
     color: #ffffff !important;
-}
-
-[data-theme="contrast"] .bg-primary-theme {
-    color: #000000 !important;
 }
 
 .card.border-danger {
@@ -286,7 +282,7 @@ html, body {
 
 
 /* =========================================
-   5. TABLES & HEADERS
+   TABLES & HEADERS
    ========================================= */
 .table {
     color: var(--text-main);
@@ -303,7 +299,7 @@ html, body {
         }
 
 /* =========================================
-   6. UTILS
+   UTILS
    ========================================= */
 .progress {
     background-color: var(--border-color);
@@ -375,7 +371,7 @@ html, body {
     }
 
 /* =========================================
-   7. DOMAIN SPECIFIC
+   DOMAIN SPECIFIC
    ========================================= */
 .hero-section {
     padding: 4rem 0;
@@ -604,7 +600,7 @@ html, body {
     }
 
 /* =========================================
-   8. NEW ADDITIONS (Forms & Modals)
+   Forms & Modals
    ========================================= */
 
 .modal-clean .modal-content {
@@ -655,7 +651,7 @@ html, body {
 }
 
 /* =========================================
-   9. WALLET BANNER THEME OVERRIDES & READABILITY
+   WALLET BANNER THEME
    ========================================= */
 
 .wallet-card .text-white-75,
@@ -665,32 +661,23 @@ html, body {
     text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-/* --- Theme Specific Banner Colors --- */
-
-/* DEFAULT THEME (Blue) - Overrides the hardcoded orange */
 :root:not([data-theme]) .wallet-card,
 [data-theme="light"] .wallet-card {
     background: linear-gradient(135deg, var(--primary-base) 0%, var(--primary-hover) 100%) !important;
     box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25) !important; /* Soft blue shadow */
 }
 
-/* DARK MODE - Deep indigo/purple gradient */
 [data-theme="dark"] .wallet-card {
-    /* Using slightly deeper blues than the primary base for a richer dark mode header */
     background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%) !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important; /* Darker shadow for depth */
-    border: 1px solid rgba(255,255,255,0.1) !important; /* Subtle highlight border */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
 }
 
 /* PINK MODE - Hot pink gradient */
 [data-theme="pink"] .wallet-card {
     background: linear-gradient(135deg, var(--primary-base) 0%, #be185d 100%) !important;
-    box-shadow: 0 8px 20px rgba(219, 39, 119, 0.25) !important; /* Soft pink shadow */
+    box-shadow: 0 8px 20px rgba(219, 39, 119, 0.25) !important;
 }
-
-/* =========================================
-   10. DYNAMIC THEME UTILS & REFINEMENTS
-   ========================================= */
 
 /* Force elements to use the active theme color */
 .text-theme {
@@ -718,7 +705,7 @@ html, body {
 /* Much subtler gradient for reward cards */
 .card-decoration-subtle {
     background: radial-gradient(circle at top right, var(--primary-base), transparent 50%);
-    opacity: 0.03 !important; /* Extremely subtle tint */
+    opacity: 0.03 !important;
     pointer-events: none;
 }
 
@@ -758,16 +745,14 @@ html, body {
             color: var(--danger-text);
         }
 
-/* Delete button and "You" label */
 .btn-soft-danger,
 .badge-you {
-    min-width:100px; /* expand based on content */
+    min-width:100px;
     height: 32px;
-    padding: 0 12px; /* enough space for icon + text */
+    padding: 0 12px;
     font-size: 0.875rem;
 }
 
-/* Disabled buttons – authoritative visual state */
 .btn:disabled,
 .btn.disabled {
     opacity: 0.55;
@@ -775,7 +760,6 @@ html, body {
     pointer-events: none;
 }
 
-/* Disabled PRIMARY button */
 .btn-primary:disabled,
 .btn-primary.disabled {
     background-color: var(--border-color) !important;

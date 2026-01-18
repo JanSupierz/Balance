@@ -75,18 +75,18 @@ document.addEventListener('DOMContentLoaded', function () {
 // --- Theme Switcher Logic ---
 
 function setTheme(themeName) {
-    // 1. Set the attribute on the HTML tag
+    // Set the attribute on the HTML tag
     if (themeName === 'default') {
         document.documentElement.removeAttribute('data-theme');
     } else {
         document.documentElement.setAttribute('data-theme', themeName);
     }
 
-    // 2. Save to LocalStorage
+    // Save to LocalStorage
     localStorage.setItem('balance-theme', themeName);
 }
 
-// 3. Initialize Theme on Load (Run this immediately)
+// Initialize Theme on Load (Run this immediately)
 (function () {
     const savedTheme = localStorage.getItem('balance-theme');
     if (savedTheme && savedTheme !== 'default') {

@@ -28,7 +28,7 @@ namespace Balance.Areas.User.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
-            // 1. Fetch ALL tasks for user with Tags included
+            // Fetch ALL tasks for user with Tags included
             var tasksEnumerable = await _unitOfWork.RepeatedTasks.GetAllAsync(
                 filter: t => t.UserId == userId,
                 includeProperties: "Tags"
@@ -36,7 +36,7 @@ namespace Balance.Areas.User.Controllers
 
             var tasks = tasksEnumerable.ToList();
 
-            // 2. Run Reset Logic (Daily/Weekly Maintenance)
+            // Run Reset Logic (Daily/Weekly Maintenance)
             bool dataChanged = false;
             var today = DateTime.Today;
 
@@ -83,7 +83,7 @@ namespace Balance.Areas.User.Controllers
 
             if (dataChanged) await _unitOfWork.SaveAsync();
 
-            // 3. Apply Filtering
+            // Apply Filtering
             if (filterTagId.HasValue)
             {
                 tasks = tasks.Where(t => t.Tags.Any(tag => tag.Id == filterTagId.Value)).ToList();
@@ -94,7 +94,7 @@ namespace Balance.Areas.User.Controllers
                 tasks = tasks.Where(t => t.Frequency == filterFrequency.Value).ToList();
             }
 
-            // 4. Apply Sorting
+            // Apply Sorting
             switch (sortOrder)
             {
                 case "title":
@@ -127,7 +127,7 @@ namespace Balance.Areas.User.Controllers
                     break;
             }
 
-            // 5. Prepare View Data
+            // Prepare View Data
             var finishedTasks = tasks.Where(t => t.CompletedCount >= t.HowManyTimes).ToList();
             var activeTasks = tasks.Where(t => t.CompletedCount < t.HowManyTimes).ToList();
 
